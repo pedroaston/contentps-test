@@ -1,13 +1,14 @@
 package main
 
 import (
+	test "github.com/libp2p/test-plans/dht/test"
 	"github.com/testground/sdk-go/run"
 )
 
-var testcases = map[string]interface{}{
-	"firstTry": run.InitializedTestCaseFn(firstTry),
+var testCases = map[string]interface{}{
+	"1st-test": test.FirstTest,
 }
 
 func main() {
-	run.InvokeMap(testcases)
+	run.InvokeMap(testCases)
 }
