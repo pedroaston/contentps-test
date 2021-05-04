@@ -3,16 +3,16 @@
   author = "pedroaston"
 
 [global]
-  plan = "dht"
+  plan = "contentps-test"
   case = "1st-test"
-  total_instances = 30
+  total_instances = 18
   builder = "docker:go"
   runner = "local:docker"
 
 [[groups]]
   id = "passive"
   [groups.instances]
-    count = 5
+    count = 3
     percentage = 0.0
 
   [groups.run]
@@ -28,7 +28,7 @@
 [[groups]]
   id = "provider-small"
   [groups.instances]
-    count = 5
+    count = 3
     percentage = 0.0
 
   [groups.run]
@@ -45,7 +45,7 @@
 [[groups]]
   id = "provider-medium"
   [groups.instances]
-    count = 5
+    count = 3
     percentage = 0.0
 
   [groups.run]
@@ -62,7 +62,7 @@
 [[groups]]
   id = "provider-large"
   [groups.instances]
-    count = 5
+    count = 3
     percentage = 0.0
 
   [groups.run]
@@ -79,7 +79,7 @@
 [[groups]]
   id = "searcher"
   [groups.instances]
-    count = 5
+    count = 3
     percentage = 0.0
 
   [groups.run]
@@ -97,7 +97,7 @@
 [[groups]]
   id = "bs"
   [groups.instances]
-    count = 5
+    count = 3
     percentage = 0.0
 
   [groups.run]

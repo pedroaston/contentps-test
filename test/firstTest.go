@@ -38,8 +38,9 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	createdState := sync.State("created")
 	subbedState := sync.State("subbed")
 	finishedState := sync.State("finished")
+	recordedState := sync.State("recorded")
 
-	ri.Client.MustSignalEntry(ctx, readyState)
+	seq := ri.Client.MustSignalEntry(ctx, readyState)
 	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
 	if err != nil {
 		return err
@@ -54,31 +55,27 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	// Subscribing Routine
-	switch ri.Node.info.Properties.BootstrapStrategy {
-	/*
-		case 1:
-			ps.MySubscribe("portugal T/surf T")
-			ps.MySubscribe("ipfs T")
-		case 2:
-			ps.MySubscribe("ipfs T")
-			ps.MySubscribe("portugal T/soccer T")
-		case 3:
-			ps.MySubscribe("ipfs T")
-			ps.MySubscribe("surf T/bali T")
-	*/
-	case 4:
+	switch seq {
+	case 1:
+		ps.MySubscribe("portugal T/surf T")
 		ps.MySubscribe("ipfs T")
-		ps.MySubscribe("surf T/bali T/trip T/price R 1000 1500")
-	case 5:
+	case 3:
 		ps.MySubscribe("ipfs T")
-		ps.MySubscribe("surf T/trip T/price R 1000 2000")
+		ps.MySubscribe("portugal T/soccer T")
 	case 6:
 		ps.MySubscribe("ipfs T")
-		ps.MySubscribe("surf T/trip T/price R 1000 1400")
-	case 7:
+		ps.MySubscribe("surf T/bali T")
+	case 10:
 		ps.MySubscribe("ipfs T")
-		ps.MySubscribe("soccer T/slb T")
-
+		ps.MySubscribe("surf T/bali T/trip T/price R 1000 1500")
+	case 12:
+		ps.MySubscribe("ipfs T")
+		ps.MySubscribe("surf T/trip T/price R 1000 2000")
+	case 14:
+		ps.MySubscribe("ipfs T")
+		ps.MySubscribe("surf T/trip T/price R 1000 1400")
+	default:
+		ps.MySubscribe("ipfs T")
 	}
 
 	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
@@ -95,29 +92,21 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 		return err2ndStop
 	}
 
-	/*
-		panic: runtime error: invalid memory address or nil pointer dereference
-		ERROR [signal SIGSEGV: segmentation violation code=0x1 addr=0x10 pc=0xd2dd32]
-	*/
-
 	// Publishing Routine
-	switch ri.Node.info.Properties.BootstrapStrategy {
-	/*
-		case 1:
-			ps.MyPublish("Publishing via ipfs is lit!", "ipfs T")
-		case 2:
-			ps.MyPublish("Portugal has the world's best waves!", "portugal T/surf T")
-		case 3:
-			ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
-		case 4:
-			ps.MyPublish("Bali some good waves!", "surf T/bali T")
-		case 5:
-			ps.MyPublish("Benfica is the best football club of the world!", "soccer T/slb T")
-	*/
-	case 6:
-		ps.MyPublish("Publishing via ipfs is exciting!", "ipfs T")
-	case 7:
-		ps.MyPublish("surf trip for 1200 euros! Promo valid for a week!", "surf T/trip T/bali T/price R 1200 1200")
+	switch seq {
+	case 2:
+		ps.MyPublish("Publishing via ipfs is lit!", "ipfs T")
+		//case 3:
+		//ps.MyPublish("Portugal has the world's best waves!", "portugal T/surf T")
+		//case 3:
+		//ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
+		//case 4:
+		//ps.MyPublish("Bali some good waves!", "surf T/bali T")
+		//case 5:
+		//ps.MyPublish("Publishing via ipfs is exciting!", "ipfs T")
+		//ps.MyPublish("Benfica is the best football club of the world!", "soccer T/slb T")
+		//case 6:
+		//ps.MyPublish("Publishing via ipfs is exciting!", "ipfs T")
 	}
 
 	time.Sleep(time.Second)
@@ -128,10 +117,17 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	nEScout, nEFast, latScout, latFast := ps.ReturnReceivedEventsStats()
+	runenv.R().RecordPoint("Number of peers", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.R().RecordPoint("Number of events received via ScoutSubs", float64(nEScout))
 	runenv.R().RecordPoint("Number of events received via FastDelivery", float64(nEFast))
 	runenv.R().RecordPoint("Avg latency of events received via ScoutSubs", float64(latScout))
-	runenv.R().RecordPoint("Avg latency of events received via ScoutSubs", float64(latFast))
+	runenv.R().RecordPoint("Avg latency of events received via FastDelivery", float64(latFast))
+
+	ri.Client.MustSignalEntry(ctx, recordedState)
+	err4thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
+	if err4thStop != nil {
+		return err4thStop
+	}
 
 	if err := stager.End(); err != nil {
 		return err

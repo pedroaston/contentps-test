@@ -1,4 +1,4 @@
-module github.com/pedroaston/contentps-test
+module github.com/libp2p/test-plans/dht
 
 go 1.16
 
