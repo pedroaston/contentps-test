@@ -40,7 +40,7 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	finishedState := sync.State("finished")
 	recordedState := sync.State("recorded")
 
-	seq := ri.Client.MustSignalEntry(ctx, readyState)
+	ri.Client.MustSignalEntry(ctx, readyState)
 	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
 	if err != nil {
 		return err
@@ -55,27 +55,25 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	// Subscribing Routine
-	switch seq {
-	case 1:
+	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
+	case "portugal-surf-sub":
 		ps.MySubscribe("portugal T/surf T")
 		ps.MySubscribe("ipfs T")
-	case 3:
+	case "portugal-soccer-sub":
 		ps.MySubscribe("ipfs T")
 		ps.MySubscribe("portugal T/soccer T")
-	case 6:
+	case "surf-bali-sub":
 		ps.MySubscribe("ipfs T")
 		ps.MySubscribe("surf T/bali T")
-	case 10:
+	case "surf-bali-trip-price":
 		ps.MySubscribe("ipfs T")
 		ps.MySubscribe("surf T/bali T/trip T/price R 1000 1500")
-	case 12:
+	case "surf-trip-price-1":
 		ps.MySubscribe("ipfs T")
 		ps.MySubscribe("surf T/trip T/price R 1000 2000")
-	case 14:
+	case "surf-trip-price-2":
 		ps.MySubscribe("ipfs T")
 		ps.MySubscribe("surf T/trip T/price R 1000 1400")
-	default:
-		ps.MySubscribe("ipfs T")
 	}
 
 	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
@@ -93,20 +91,13 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	// Publishing Routine
-	switch seq {
-	case 2:
+	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
+	case "ipfs-pub-1":
 		ps.MyPublish("Publishing via ipfs is lit!", "ipfs T")
-		//case 3:
-		//ps.MyPublish("Portugal has the world's best waves!", "portugal T/surf T")
-		//case 3:
-		//ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
-		//case 4:
-		//ps.MyPublish("Bali some good waves!", "surf T/bali T")
-		//case 5:
-		//ps.MyPublish("Publishing via ipfs is exciting!", "ipfs T")
-		//ps.MyPublish("Benfica is the best football club of the world!", "soccer T/slb T")
-		//case 6:
-		//ps.MyPublish("Publishing via ipfs is exciting!", "ipfs T")
+	case "portugal-surf-pub":
+		ps.MyPublish("Portugal has the world's best waves!", "portugal T/surf T")
+	case "ipfs-pub-2":
+		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
 	}
 
 	time.Sleep(time.Second)
@@ -118,6 +109,7 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 
 	nEScout, nEFast, latScout, latFast := ps.ReturnReceivedEventsStats()
 	runenv.R().RecordPoint("Number of peers", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
+	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
 	runenv.R().RecordPoint("Number of events received via ScoutSubs", float64(nEScout))
 	runenv.R().RecordPoint("Number of events received via FastDelivery", float64(nEFast))
 	runenv.R().RecordPoint("Avg latency of events received via ScoutSubs", float64(latScout))
