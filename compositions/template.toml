@@ -22,7 +22,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "1"
-      latency = "0"
+      latency = "10"
       timeout_secs = "600"
 
 [[groups]]
@@ -38,7 +38,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "4"
-      latency = "0"
+      latency = "10"
       record_count = "1"
       timeout_secs = "600"
 
@@ -55,7 +55,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "3"
-      latency = "0"
+      latency = "10"
       record_count = "1"
       timeout_secs = "600"
 
@@ -72,7 +72,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "2"
-      latency = "0"
+      latency = "10"
       record_count = "1"
       timeout_secs = "600"
 
@@ -89,7 +89,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "5"
-      latency = "0"
+      latency = "10"
       n_find_peers = "5"
       search_records = "true"
       timeout_secs = "600"
@@ -108,7 +108,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "0"
-      latency = "0"
+      latency = "10"
       timeout_secs = "600"
 
 [[groups]]
@@ -125,7 +125,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "6"
-      latency = "0"
+      latency = "10"
       timeout_secs = "600"
 
 [[groups]]
@@ -142,7 +142,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "7"
-      latency = "0"
+      latency = "10"
       timeout_secs = "600"
 
 [[groups]]
@@ -159,5 +159,5 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "8"
-      latency = "0"
+      latency = "10"
       timeout_secs = "600"

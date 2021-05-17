@@ -21,8 +21,9 @@ require (
 	github.com/libp2p/go-tcp-transport v0.2.1
 	github.com/multiformats/go-multiaddr v0.3.1
 	github.com/multiformats/go-multiaddr-net v0.2.0
-	github.com/pedroaston/contentpubsub v0.1.5
+	github.com/pedroaston/contentpubsub v0.1.7
 	github.com/pkg/errors v0.9.1
 	github.com/testground/sdk-go v0.2.7
 	go.uber.org/zap v1.16.0
+	golang.org/x/sys v0.0.0-20210217105451-b926d437f341 // indirect
 )

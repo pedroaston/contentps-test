@@ -40,6 +40,12 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	finishedState := sync.State("finished")
 	recordedState := sync.State("recorded")
 
+	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
+
+	if err := stager.Begin(); err != nil {
+		return err
+	}
+
 	ri.Client.MustSignalEntry(ctx, readyState)
 	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
 	if err != nil {
@@ -76,15 +82,8 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("surf T/trip T/price R 1000 1400")
 	}
 
-	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
-
-	if err := stager.Begin(); err != nil {
-		return err
-	}
-
 	time.Sleep(time.Second)
 	ri.Client.MustSignalEntry(ctx, subbedState)
-
 	err2ndStop := <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
 	if err2ndStop != nil {
 		return err2ndStop
@@ -107,13 +106,11 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 		return err3rdStop
 	}
 
-	nEScout, nEFast, latScout, latFast := ps.ReturnReceivedEventsStats()
+	nEScout, _, latScout, _ := ps.ReturnReceivedEventsStats()
 	runenv.R().RecordPoint("Number of peers", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
 	runenv.R().RecordPoint("Number of events received via ScoutSubs", float64(nEScout))
-	runenv.R().RecordPoint("Number of events received via FastDelivery", float64(nEFast))
 	runenv.R().RecordPoint("Avg latency of events received via ScoutSubs", float64(latScout))
-	runenv.R().RecordPoint("Avg latency of events received via FastDelivery", float64(latFast))
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err4thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
