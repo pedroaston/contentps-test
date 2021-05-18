@@ -6,7 +6,8 @@ import (
 )
 
 var testCases = map[string]interface{}{
-	"1st-test": test.FirstTest,
+	"1st-test":  test.FirstTest,
+	"fast-test": test.FastTest,
 }
 
 func main() {
