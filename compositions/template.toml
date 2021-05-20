@@ -5,7 +5,7 @@
 [global]
   plan = "contentps-test"
   case = "1st-test"
-  total_instances = 17
+  total_instances = 16
   builder = "docker:go"
   runner = "local:docker"
 
@@ -28,7 +28,7 @@
 [[groups]]
   id = "sub-group-2"
   [groups.instances]
-    count = 3
+    count = 2
     percentage = 0.0
 
   [groups.run]
