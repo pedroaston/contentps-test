@@ -131,7 +131,7 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
 	runenv.R().RecordPoint("Number of events received via ScoutSubs", float64(nEScout))
 	runenv.R().RecordPoint("Avg latency of events received via ScoutSubs", float64(latScout))
-	runenv.R().RecordPoint("Avg time to sub via ScoutSubs", float64(ps.ReturnSubStats()))
+	//runenv.R().RecordPoint("Avg time to sub via ScoutSubs", float64(ps.ReturnSubStats()))
 	runenv.R().RecordPoint("CPU used - Begin", initCpu[0].User)
 	runenv.R().RecordPoint("CPU used - End", finalCpu[0].User)
 	runenv.R().RecordPoint("Memory used - Begin", float64(initMem.Used))

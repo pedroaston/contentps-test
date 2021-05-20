@@ -7,6 +7,7 @@ runner = "local:exec"
 [builders."docker:go"]
 enabled = true
 go_version = "1.16"
+build_base_image = "golang:1.16-buster"
 module_path = "github.com/libp2p/test-plans/dht"
 exec_pkg = "."
 
