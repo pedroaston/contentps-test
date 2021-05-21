@@ -5,7 +5,7 @@
 [global]
   plan = "contentps-test"
   case = "1st-test"
-  total_instances = 16
+  total_instances = 18
   builder = "docker:go"
   runner = "local:docker"
 
@@ -22,13 +22,13 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "1"
-      latency = "10"
+      bandwidth = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-2"
   [groups.instances]
-    count = 2
+    count = 3
     percentage = 0.0
 
   [groups.run]
@@ -38,14 +38,14 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "4"
-      latency = "10"
+      bandwidth = "1"
       record_count = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-3"
   [groups.instances]
-    count = 2
+    count = 3
     percentage = 0.0
 
   [groups.run]
@@ -55,7 +55,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "3"
-      latency = "10"
+      bandwidth = "1"
       record_count = "1"
       timeout_secs = "600"
 
@@ -72,7 +72,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "2"
-      latency = "10"
+      bandwidth = "1"
       record_count = "1"
       timeout_secs = "600"
 
@@ -89,7 +89,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "5"
-      latency = "10"
+      bandwidth = "1"
       n_find_peers = "5"
       search_records = "true"
       timeout_secs = "600"
@@ -108,7 +108,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "0"
-      latency = "10"
+      bandwidth = "1"
       timeout_secs = "600"
 
 [[groups]]
@@ -125,7 +125,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "6"
-      latency = "10"
+      bandwidth = "1"
       timeout_secs = "600"
 
 [[groups]]
@@ -142,7 +142,7 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "7"
-      latency = "10"
+      bandwidth = "1"
       timeout_secs = "600"
 
 [[groups]]
@@ -159,5 +159,5 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "8"
-      latency = "10"
+      bandwidth = "1"
       timeout_secs = "600"

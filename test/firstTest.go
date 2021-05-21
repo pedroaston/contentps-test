@@ -63,7 +63,7 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, "PT")
+	ps := pubsub.NewPubSub(ri.Node.dht, Region(ri.Node.info.Seq%3).String())
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C

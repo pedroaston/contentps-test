@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net"
 	"os"
+	"strings"
 	gosync "sync"
 	"time"
 
@@ -55,9 +56,21 @@ const (
 	OptDatastoreLeveldb
 )
 
+type Region int
+
+const (
+	PT Region = iota
+	FR
+	IT
+)
+
+func (r Region) String() string {
+	return [...]string{"PT", "FR", "IT"}[r]
+}
+
 type SetupOpts struct {
 	Timeout     time.Duration
-	Latency     time.Duration
+	Bandwidth   int
 	AutoRefresh bool
 	RandomWalk  bool
 
@@ -87,7 +100,7 @@ type DHTRunInfo struct {
 func GetCommonOpts(runenv *runtime.RunEnv) *SetupOpts {
 	opts := &SetupOpts{
 		Timeout:     time.Duration(runenv.IntParam("timeout_secs")) * time.Second,
-		Latency:     time.Duration(runenv.IntParam("latency")) * time.Millisecond,
+		Bandwidth:   runenv.IntParam("bandwidth"),
 		AutoRefresh: runenv.BooleanParam("auto_refresh"),
 		RandomWalk:  runenv.BooleanParam("random_walk"),
 
@@ -268,7 +281,7 @@ var networkSetupMx gosync.Mutex
 
 // SetupNetwork instructs the sidecar (if enabled) to setup the network for this
 // test case.
-func SetupNetwork(ctx context.Context, ri *DHTRunInfo, latency time.Duration) error {
+func SetupNetwork(ctx context.Context, ri *DHTRunInfo, bandwidth int, regionCfg bool) error {
 	if !ri.RunEnv.TestSidecar {
 		return nil
 	}
@@ -291,12 +304,146 @@ func SetupNetwork(ctx context.Context, ri *DHTRunInfo, latency time.Duration) er
 		Enable:        true,
 		RoutingPolicy: tgNetwork.AllowAll,
 		Default: tgNetwork.LinkShape{
-			Latency:   latency,
-			Bandwidth: 10 << 20, // 10Mib
+			Latency:   10 * time.Millisecond,
+			Bandwidth: uint64(bandwidth) << 20, // 10Mib
 		},
 		CallbackState:  state,
 		CallbackTarget: ri.RunEnv.TestInstanceCount,
 	}
+
+	if regionCfg {
+		if ri.Node.info.Seq%3 == int(PT) {
+			for _, p := range ri.Others {
+				if p.Seq%3 == int(PT) {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 10 * time.Millisecond,
+						},
+					})
+				} else if p.Seq%3 == int(FR) {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 45 * time.Millisecond,
+						},
+					})
+				} else {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 50 * time.Millisecond,
+						},
+					})
+				}
+			}
+		} else if ri.Node.info.Seq%3 == int(FR) {
+			for _, p := range ri.Others {
+				if p.Seq%3 == int(PT) {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 45 * time.Millisecond,
+						},
+					})
+				} else if p.Seq%3 == int(FR) {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 10 * time.Millisecond,
+						},
+					})
+				} else {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 20 * time.Millisecond,
+						},
+					})
+				}
+			}
+		} else {
+			for _, p := range ri.Others {
+				if p.Seq%3 == int(PT) {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 50 * time.Millisecond,
+						},
+					})
+				} else if p.Seq%3 == int(FR) {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 20 * time.Millisecond,
+						},
+					})
+				} else {
+					pnet := ptypes.IPNet{
+						IPNet: net.IPNet{
+							IP:   net.ParseIP(strings.Split(p.Addrs.Addrs[0].String(), "/")[2]),
+							Mask: net.IPMask([]byte{255, 255, 255, 255}),
+						},
+					}
+					cfg.Rules = append(cfg.Rules, tgNetwork.LinkRule{
+						Subnet: pnet,
+						LinkShape: tgNetwork.LinkShape{
+							Latency: 10 * time.Millisecond,
+						},
+					})
+				}
+			}
+		}
+	}
+
 	err := ri.NetClient.ConfigureNetwork(ctx, cfg)
 
 	if err != nil {
@@ -336,7 +483,7 @@ func Setup(ctx context.Context, runenv *runtime.RunEnv, opts *SetupOpts) (*DHTRu
 		)
 	}
 
-	err := SetupNetwork(ctx, ri, 0)
+	err := SetupNetwork(ctx, ri, 0, false)
 	if err != nil {
 		return nil, err
 	}
@@ -837,7 +984,7 @@ func Base(ctx context.Context, runenv *runtime.RunEnv, commonOpts *SetupOpts) (*
 		}
 	}
 
-	if err := SetupNetwork(ectx, ri, commonOpts.Latency); err != nil {
+	if err := SetupNetwork(ectx, ri, commonOpts.Bandwidth, true); err != nil {
 		return nil, err
 	}
 
