@@ -14,7 +14,7 @@ import (
 	pubsub "github.com/pedroaston/contentpubsub"
 )
 
-func FirstTest(runenv *runtime.RunEnv) error {
+func SubBurstScoutTest(runenv *runtime.RunEnv) error {
 	commonOpts := GetCommonOpts(runenv)
 
 	ctx, cancel := context.WithTimeout(context.Background(), commonOpts.Timeout)
@@ -25,7 +25,7 @@ func FirstTest(runenv *runtime.RunEnv) error {
 		return err
 	}
 
-	if err := TestSomething(ctx, ri); err != nil {
+	if err := TestNormalScout(ctx, ri); err != nil {
 		return err
 	}
 	Teardown(ctx, ri.RunInfo)
@@ -33,7 +33,7 @@ func FirstTest(runenv *runtime.RunEnv) error {
 	return nil
 }
 
-func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
+func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	runenv := ri.RunEnv
 	readyState := sync.State("ready")
@@ -100,6 +100,28 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 		return err2ndStop
 	}
 
+	// Subscribing Routine
+	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
+	case "sub-group-1":
+		ps.MySubscribe("surf T/madeira T")
+		ps.MySubscribe("dogecoin T")
+	case "sub-group-2":
+		ps.MySubscribe("dogecoin T")
+		ps.MySubscribe("surf T/azores T")
+	case "sub-group-3":
+		ps.MySubscribe("dogecoin T")
+		ps.MySubscribe("surf T/bali T")
+	case "sub-group-4":
+		ps.MySubscribe("dogecoin T")
+		ps.MySubscribe("bitcoin T/price R 10000 15000")
+	case "sub-group-5":
+		ps.MySubscribe("dogecoin T")
+		ps.MySubscribe("temperature R 30 40")
+	case "sub-group-6":
+		ps.MySubscribe("dogecoin T")
+		ps.MySubscribe("ronaldo T/sporting T")
+	}
+
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
 	case "pub-1":
@@ -108,6 +130,8 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Portugal has the world's best waves!", "portugal T/surf T")
 	case "pub-3":
 		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
+	case "pub-4":
+		ps.MyPublish("Surf trip to bali for 1050, just today!", "surf T/bali T/trip T/price R 1050 1050")
 	}
 
 	time.Sleep(time.Second)

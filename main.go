@@ -6,8 +6,10 @@ import (
 )
 
 var testCases = map[string]interface{}{
-	"1st-test":  test.FirstTest,
-	"fast-test": test.FastTest,
+	"normal-scout-test":     test.NormalScoutTest,
+	"subburst-scout-test":   test.SubBurstScoutTest,
+	"eventburst-scout-test": test.EventBurstScoutTest,
+	"fast-test":             test.FastTest,
 }
 
 func main() {
