@@ -311,7 +311,8 @@ func SetupNetwork(ctx context.Context, ri *DHTRunInfo, bandwidth int, regionCfg 
 		CallbackTarget: ri.RunEnv.TestInstanceCount,
 	}
 
-	if regionCfg {
+	// Rules are not implemented
+	if regionCfg && false {
 		if ri.Node.info.Seq%3 == int(PT) {
 			for _, p := range ri.Others {
 				if p.Seq%3 == int(PT) {

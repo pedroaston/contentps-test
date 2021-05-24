@@ -132,10 +132,8 @@ func TestSomething(ctx context.Context, ri *DHTRunInfo) error {
 	runenv.R().RecordPoint("Events received - ScoutSubs", float64(nEScout))
 	runenv.R().RecordPoint("Avg event latency - ScoutSubs", float64(latScout))
 	runenv.R().RecordPoint("Avg time to sub - ScoutSubs", float64(ps.ReturnSubStats()))
-	runenv.R().RecordPoint("CPU used - Begin", initCpu[0].User)
-	runenv.R().RecordPoint("CPU used - End", finalCpu[0].User)
-	runenv.R().RecordPoint("Memory used - Begin", float64(initMem.Used))
-	runenv.R().RecordPoint("Memory used - End", float64(finalMem.Used))
+	runenv.R().RecordPoint("CPU used - ScoutSubs", finalCpu[0].User-initCpu[0].User)
+	runenv.R().RecordPoint("Memory used - ScoutSubs", float64(finalMem.Used)-float64(initMem.Used))
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err4thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
