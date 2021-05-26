@@ -63,6 +63,7 @@ func TestNormalScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
+	variant := "BU"
 	ps := pubsub.NewPubSub(ri.Node.dht, Region(ri.Node.info.Seq%3).String())
 
 	ri.Client.MustSignalEntry(ctx, createdState)
@@ -129,13 +130,13 @@ func TestNormalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	nEScout, _, latScout, _ := ps.ReturnReceivedEventsStats()
-	runenv.R().RecordPoint("Number of peers - ScoutSubs normal", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
+	runenv.R().RecordPoint("Number of peers - ScoutSubs normal"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
-	runenv.R().RecordPoint("Events received - ScoutSubs normal", float64(nEScout))
-	runenv.R().RecordPoint("Avg event latency - ScoutSubs normal", float64(latScout))
-	runenv.R().RecordPoint("Avg time to sub - ScoutSubs normal", float64(ps.ReturnSubStats()))
-	runenv.R().RecordPoint("CPU used - ScoutSubs normal", finalCpu[0].User-initCpu[0].User)
-	runenv.R().RecordPoint("Memory used - ScoutSubs normal", float64(finalMem.Used)-float64(initMem.Used))
+	runenv.R().RecordPoint("Events received - ScoutSubs normal"+variant, float64(nEScout))
+	runenv.R().RecordPoint("Avg event latency - ScoutSubs normal"+variant, float64(latScout))
+	//	runenv.R().RecordPoint("Avg time to sub - ScoutSubs normal"+variant, float64(ps.ReturnSubStats()))
+	runenv.R().RecordPoint("CPU used - ScoutSubs normal"+variant, finalCpu[0].User-initCpu[0].User)
+	runenv.R().RecordPoint("Memory used - ScoutSubs normal"+variant, float64(finalMem.Used)-float64(initMem.Used))
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err4thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
