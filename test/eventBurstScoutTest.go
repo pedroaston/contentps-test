@@ -26,7 +26,7 @@ func EventBurstScoutTest(runenv *runtime.RunEnv) error {
 		return err
 	}
 
-	if err := TestNormalScout(ctx, ri); err != nil {
+	if err := TestEventBurstScout(ctx, ri); err != nil {
 		return err
 	}
 	Teardown(ctx, ri.RunInfo)
@@ -64,7 +64,7 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "RR"
+	variant := "BU"
 	ps := pubsub.NewPubSub(ri.Node.dht, Region(ri.Node.info.Seq%3).String())
 
 	ri.Client.MustSignalEntry(ctx, createdState)

@@ -17,10 +17,22 @@ metric_types = {"fast": ['Avg time to sub - FastDelivery', 'Avg event latency - 
 'CPU used - ScoutSubs normalBR', 'Memory used - ScoutSubs normalBR'],
  "normal_scout_RR": ['Avg event latency - ScoutSubs normalRR', 'Avg time to sub - ScoutSubs normalRR',
 'CPU used - ScoutSubs normalRR', 'Memory used - ScoutSubs normalRR'],
- "normal_subBurst": ['Avg event latency - ScoutSubs subBurst', 'Avg time to sub - ScoutSubs subBurst', 
-'CPU used - ScoutSubs subBurst', 'Memory used - ScoutSubs subBurst'],
- "normal_eventBurst": ['Avg event latency - ScoutSubs eventBurst', 'Avg time to sub - ScoutSubs eventBurst',
-'CPU used - ScoutSubs eventBurst', 'Memory used - ScoutSubs eventBurst']}
+ "subBurst_scout_BU": ['Avg event latency - ScoutSubs subBurstBU',  
+'CPU used - ScoutSubs subBurstBU', 'Memory used - ScoutSubs subBurstBU'],
+ "subBurst_scout_RU": ['Avg event latency - ScoutSubs subBurstRU',  
+'CPU used - ScoutSubs subBurstRU', 'Memory used - ScoutSubs subBurstRU'],
+ "subBurst_scout_BR": ['Avg event latency - ScoutSubs subBurstBR', 'Avg time to sub - ScoutSubs subBurstBR', 
+'CPU used - ScoutSubs subBurstBR', 'Memory used - ScoutSubs subBurstBR'],
+ "subBurst_scout_RR": ['Avg event latency - ScoutSubs subBurstRR', 'Avg time to sub - ScoutSubs subBurstRR', 
+'CPU used - ScoutSubs subBurstRR', 'Memory used - ScoutSubs subBurstRR'],
+ "eventBurst_scout_BU": ['Avg event latency - ScoutSubs eventBurstBU', 
+'CPU used - ScoutSubs eventBurstBU', 'Memory used - ScoutSubs eventBurstBU'],
+ "eventBurst_scout_RU": ['Avg event latency - ScoutSubs eventBurstRU', 
+'CPU used - ScoutSubs eventBurstRU', 'Memory used - ScoutSubs eventBurstRU'],
+ "eventBurst_scout_BR": ['Avg event latency - ScoutSubs eventBurstBR', 'Avg time to sub - ScoutSubs eventBurstBR',
+'CPU used - ScoutSubs eventBurstBR', 'Memory used - ScoutSubs eventBurstBR'],
+ "eventBurst_scout_RR": ['Avg event latency - ScoutSubs eventBurstRR', 'Avg time to sub - ScoutSubs eventBurstRR',
+'CPU used - ScoutSubs eventBurstRR', 'Memory used - ScoutSubs eventBurstRR']}
 
 ########################################################
 ## Interprets a line (metric) from a results.out file ##
