@@ -2,6 +2,7 @@ import os
 import json
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 ##############################
 ## Auxiliar data structures ##
@@ -69,7 +70,7 @@ def digested_results(res, test):
 
     peer_runs = num_metrics/len(test)
     for sums in summary:
-        final_data[sums + "/mean"] = round(summary[sums]/peer_runs, 2)
+        final_data[sums + "/mean"] = summary[sums]/peer_runs
 
     final_data["runs"] = peer_runs//18
     return final_data
@@ -101,27 +102,55 @@ def plot_memory_metric(scenario):
      scout_res_BR['Memory used - ScoutSubs '+scenario+'BR/max'], scout_res_RU['Memory used - ScoutSubs '+scenario+'RU/max'],
      scout_res_RR['Memory used - ScoutSubs '+scenario+'RR/max']]
 
+
+    sns.set_context('talk', font_scale = 0.75)
+    fig, ax = plt.subplots(figsize=(12, 8))
+
     x = np.arange(len(labels))  # the label locations
     width = 0.4  # the width of the bars
 
-    fig, ax = plt.subplots()
+    
     rects1 = ax.bar(x - width/2, mean_values, width, label='mean')
     rects2 = ax.bar(x + width/2, max_values, width, label='max')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('bytes used')
-    ax.set_xlabel('variants')
-    ax.set_title('Memory used by pubsub')
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
 
-    ax.bar_label(rects1, padding=3)
-    ax.bar_label(rects2, padding=3)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_color('#DDDDDD')
+    ax.tick_params(bottom=False, left=False)
+    ax.set_axisbelow(True)
+    ax.yaxis.grid(True, color='#EEEEEE')
+    ax.xaxis.grid(False)
+
+    ax.set_ylabel('# bytes used', labelpad=20)
+    ax.set_xlabel('Variants', labelpad=20)
+    ax.set_title('Memory used by pubsub', pad=30, fontsize=20)
+
+    for bar in ax.patches:
+        # The text annotation for each bar should be its height.
+        bar_value = bar.get_height()
+        # Format the text with commas to separate thousands. You can do
+        # any type of formatting here though.
+        text = f'{bar_value:.2e}'
+        # This will give the middle of each bar on the x-axis.
+        text_x = bar.get_x() + bar.get_width() / 2
+        # get_y() is where the bar starts so we add the height to it.
+        text_y = bar.get_y() + bar_value
+        # If we want the text to be the same color as the bar, we can
+        # get the color like so:
+        bar_color = bar.get_facecolor()
+        # If you want a consistent color, you can just set it as a constant, e.g. #222222
+        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color,
+                size=12)
 
     fig.tight_layout()
-
     plt.show()
+    print()
 
 ######################
 ## Cpu metrics plot ##
@@ -141,27 +170,52 @@ def plot_cpu_metric(scenario):
      scout_res_BR['CPU used - ScoutSubs '+scenario+'BR/max'], scout_res_RU['CPU used - ScoutSubs '+scenario+'RU/max'],
      scout_res_RR['CPU used - ScoutSubs '+scenario+'RR/max']]
 
+    sns.set_context('talk', font_scale = 0.75)
+    fig, ax = plt.subplots(figsize=(12, 8))
     x = np.arange(len(labels))  # the label locations
     width = 0.4  # the width of the bars
 
-    fig, ax = plt.subplots()
     rects1 = ax.bar(x - width/2, mean_values, width, label='mean')
     rects2 = ax.bar(x + width/2, max_values, width, label='max')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('cpu user-time (s)')
-    ax.set_xlabel('variants')
-    ax.set_title('CPU time used by pubsub')
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
 
-    ax.bar_label(rects1, padding=3)
-    ax.bar_label(rects2, padding=3)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_color('#DDDDDD')
+    ax.tick_params(bottom=False, left=False)
+    ax.set_axisbelow(True)
+    ax.yaxis.grid(True, color='#EEEEEE')
+    ax.xaxis.grid(False)
+
+    ax.set_ylabel('cpu user-time (s)', labelpad=20)
+    ax.set_xlabel('Variants', labelpad=20)
+    ax.set_title('CPU time used by pubsub', pad=30, fontsize=20)
+
+    for bar in ax.patches:
+        # The text annotation for each bar should be its height.
+        bar_value = bar.get_height()
+        # Format the text with commas to separate thousands. You can do
+        # any type of formatting here though.
+        text = f'{bar_value:.2f}'
+        # This will give the middle of each bar on the x-axis.
+        text_x = bar.get_x() + bar.get_width() / 2
+        # get_y() is where the bar starts so we add the height to it.
+        text_y = bar.get_y() + bar_value
+        # If we want the text to be the same color as the bar, we can
+        # get the color like so:
+        bar_color = bar.get_facecolor()
+        # If you want a consistent color, you can just set it as a constant, e.g. #222222
+        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color,
+                size=12)
 
     fig.tight_layout()
-
     plt.show()
+    print()
 
 ####################################
 ## Avg event latency metrics plot ##
@@ -181,24 +235,48 @@ def plot_latency_metric(scenario):
      scout_res_BR['Avg event latency - ScoutSubs '+scenario+'BR/max'], scout_res_RU['Avg event latency - ScoutSubs '+scenario+'RU/max'],
      scout_res_RR['Avg event latency - ScoutSubs '+scenario+'RR/max']]
 
+    sns.set_context('talk', font_scale = 0.75)
+    fig, ax = plt.subplots(figsize=(12, 8))
     x = np.arange(len(labels))  # the label locations
     width = 0.4  # the width of the bars
 
-    fig, ax = plt.subplots()
     rects1 = ax.bar(x - width/2, mean_values, width, label='mean')
     rects2 = ax.bar(x + width/2, max_values, width, label='max')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('event latency (ms)')
-    ax.set_xlabel('variants')
-    ax.set_title('Event latency with pubsub')
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
 
-    ax.bar_label(rects1, padding=3)
-    ax.bar_label(rects2, padding=3)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_color('#DDDDDD')
+    ax.tick_params(bottom=False, left=False)
+    ax.set_axisbelow(True)
+    ax.yaxis.grid(True, color='#EEEEEE')
+    ax.xaxis.grid(False)
+
+    ax.set_ylabel('event latency (ms)', labelpad=20)
+    ax.set_xlabel('Variants', labelpad=20)
+    ax.set_title('Event latency with pubsub', pad=30, fontsize=20)
+
+    for bar in ax.patches:
+        # The text annotation for each bar should be its height.
+        bar_value = bar.get_height()
+        # Format the text with commas to separate thousands. You can do
+        # any type of formatting here though.
+        text = f'{bar_value:.0f}'
+        # This will give the middle of each bar on the x-axis.
+        text_x = bar.get_x() + bar.get_width() / 2
+        # get_y() is where the bar starts so we add the height to it.
+        text_y = bar.get_y() + bar_value
+        # If we want the text to be the same color as the bar, we can
+        # get the color like so:
+        bar_color = bar.get_facecolor()
+        # If you want a consistent color, you can just set it as a constant, e.g. #222222
+        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color,
+                size=12)
 
     fig.tight_layout()
-
     plt.show()
