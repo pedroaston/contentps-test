@@ -4,7 +4,7 @@
 
 [global]
   plan = "contentps-test"
-  case = "eventburst-scout-test"
+  case = "fault-scout-test"
   total_instances = 18
   builder = "docker:go"
   runner = "local:docker"

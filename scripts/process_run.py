@@ -32,7 +32,15 @@ metric_types = {"fast": ['Avg time to sub - FastDelivery', 'Avg event latency - 
  "eventBurst_scout_BR": ['Avg event latency - ScoutSubs eventBurstBR', 'Avg time to sub - ScoutSubs eventBurstBR',
 'CPU used - ScoutSubs eventBurstBR', 'Memory used - ScoutSubs eventBurstBR'],
  "eventBurst_scout_RR": ['Avg event latency - ScoutSubs eventBurstRR', 'Avg time to sub - ScoutSubs eventBurstRR',
-'CPU used - ScoutSubs eventBurstRR', 'Memory used - ScoutSubs eventBurstRR']}
+'CPU used - ScoutSubs eventBurstRR', 'Memory used - ScoutSubs eventBurstRR'],
+ "fault_scout_BU": ['Avg event latency - ScoutSubs faultBU', 
+'CPU used - ScoutSubs faultBU', 'Memory used - ScoutSubs faultBU'],
+ "fault_scout_RU": ['Avg event latency - ScoutSubs faultRU', 
+'CPU used - ScoutSubs faultRU', 'Memory used - ScoutSubs faultRU'],
+ "fault_scout_BR": ['Avg event latency - ScoutSubs faultBR', 'Avg time to sub - ScoutSubs faultBR',
+'CPU used - ScoutSubs faultBR', 'Memory used - ScoutSubs faultBR'],
+ "fault_scout_RR": ['Avg event latency - ScoutSubs faultRR', 'Avg time to sub - ScoutSubs faultRR',
+'CPU used - ScoutSubs faultRR', 'Memory used - ScoutSubs faultRR']}
 
 ########################################################
 ## Interprets a line (metric) from a results.out file ##
@@ -57,8 +65,10 @@ def aggregate_results(results_dir):
             if filepath.split("/")[-1] == "results.out":
                 resultFile = open(filepath, 'r')
                 for l in resultFile.readlines():
-                    res.append(process_results_line(l))
-    return res   
+                    item = process_results_line(l)
+                    if item["value"] == 0:
+                        res.append(item)
+    return res
 
 ###############################################################################
 ## Processes all metrics produced in FastDelivery and compiles the means and ##
@@ -68,23 +78,23 @@ def digested_results(res, test):
     
     summary = {}
     final_data = {}
-    num_metrics = 0
+    num_metrics = {}
     
     for measure in test:
         summary[measure] = 0
+        num_metrics[measure] = 0
         final_data[measure + "/max"] = 0
     for item in res:
         if item["name"] in test:
-            num_metrics += 1
+            num_metrics[item["name"]] += 1
             summary[item["name"]] += item["value"]
             if item["value"] > final_data[item["name"] + "/max"]:
                 final_data[item["name"] + "/max"] = item["value"]
 
-    peer_runs = num_metrics/len(test)
     for sums in summary:
-        final_data[sums + "/mean"] = summary[sums]/peer_runs
+        if num_metrics[sums] != 0:
+            final_data[sums + "/mean"] = summary[sums]/num_metrics[sums]
 
-    final_data["runs"] = peer_runs//18
     return final_data
 
 ###############################################
