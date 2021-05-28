@@ -110,3 +110,39 @@ process_run.plot_latency_metric("eventBurst")
 ![png](output_5_4.png)
     
 
+
+### Fault Tolerance Scenario
+Here we have a scenario similar to the normal one, but this time one group of subs crashes after the subscription routine.
+
+
+```python
+import process_run
+
+process_run.plot_memory_metric("fault")
+process_run.plot_cpu_metric("fault")
+process_run.plot_latency_metric("fault")
+```
+
+
+    
+![png](output_7_0.png)
+    
+
+
+    
+
+
+
+    
+![png](output_7_2.png)
+    
+
+
+    
+
+
+
+    
+![png](output_7_4.png)
+    
+

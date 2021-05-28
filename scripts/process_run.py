@@ -66,7 +66,7 @@ def aggregate_results(results_dir):
                 resultFile = open(filepath, 'r')
                 for l in resultFile.readlines():
                     item = process_results_line(l)
-                    if item["value"] == 0:
+                    if item["value"] > 0:
                         res.append(item)
     return res
 
