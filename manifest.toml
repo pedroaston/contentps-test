@@ -38,7 +38,8 @@ instances = { min = 16, max = 10000, default = 16 }
 
   [testcases.params]
   timeout_secs = { type = "int", desc = "test timeout", unit = "seconds", default = 300 }
-  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 0 }
+  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 10 }
+  bandwidth    = { type = "int", desc = "link bandwidth between peers", unit = "MB", default = 1 }
   auto_refresh = { type = "bool", desc = "enable DHT routing table autorefresh", unit = "bool", default = true }
   random_walk  = { type = "bool", desc = "run 5 random walks before the test", unit = "bool", default = false }
   bucket_size  = { type = "int", desc = "routing table bucket size", unit = "peers", default = 2 }
@@ -52,8 +53,6 @@ instances = { min = 16, max = 10000, default = 16 }
   undialable   = { type = "bool", desc = "node is undialable", unit = "bool", default = false}
   group_order  = { type = "int", desc = "the order in which the node is bootstrapped, may be tied with another node", unit ="int", default = 0}
   expect_dht   = { type = "bool", desc = "the node expects to be a dht server", unit ="bool", default = true}
-
-  n_find_peers = { type = "int", desc = "number of peers to find", unit = "peers", default = 1 }
 
 [[testcases]]
 name = "fast-test"
@@ -61,7 +60,8 @@ instances = { min = 16, max = 10000, default = 16 }
 
   [testcases.params]
   timeout_secs = { type = "int", desc = "test timeout", unit = "seconds", default = 300 }
-  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 0 }
+  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 10 }
+  bandwidth    = { type = "int", desc = "link bandwidth between peers", unit = "MB", default = 1 }
   auto_refresh = { type = "bool", desc = "enable DHT routing table autorefresh", unit = "bool", default = true }
   random_walk  = { type = "bool", desc = "run 5 random walks before the test", unit = "bool", default = false }
   bucket_size  = { type = "int", desc = "routing table bucket size", unit = "peers", default = 2 }
@@ -75,8 +75,6 @@ instances = { min = 16, max = 10000, default = 16 }
   undialable   = { type = "bool", desc = "node is undialable", unit = "bool", default = false}
   group_order  = { type = "int", desc = "the order in which the node is bootstrapped, may be tied with another node", unit ="int", default = 0}
   expect_dht   = { type = "bool", desc = "the node expects to be a dht server", unit ="bool", default = true}
-
-  n_find_peers = { type = "int", desc = "number of peers to find", unit = "peers", default = 1 }
 
 [[testcases]]
 name = "subburst-scout-test"
@@ -84,7 +82,8 @@ instances = { min = 16, max = 10000, default = 16 }
 
   [testcases.params]
   timeout_secs = { type = "int", desc = "test timeout", unit = "seconds", default = 300 }
-  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 0 }
+  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 10 }
+  bandwidth    = { type = "int", desc = "link bandwidth between peers", unit = "MB", default = 1 }
   auto_refresh = { type = "bool", desc = "enable DHT routing table autorefresh", unit = "bool", default = true }
   random_walk  = { type = "bool", desc = "run 5 random walks before the test", unit = "bool", default = false }
   bucket_size  = { type = "int", desc = "routing table bucket size", unit = "peers", default = 2 }
@@ -98,8 +97,6 @@ instances = { min = 16, max = 10000, default = 16 }
   undialable   = { type = "bool", desc = "node is undialable", unit = "bool", default = false}
   group_order  = { type = "int", desc = "the order in which the node is bootstrapped, may be tied with another node", unit ="int", default = 0}
   expect_dht   = { type = "bool", desc = "the node expects to be a dht server", unit ="bool", default = true}
-
-  n_find_peers = { type = "int", desc = "number of peers to find", unit = "peers", default = 1 }
 
 [[testcases]]
 name = "eventburst-scout-test"
@@ -107,7 +104,8 @@ instances = { min = 16, max = 10000, default = 16 }
 
   [testcases.params]
   timeout_secs = { type = "int", desc = "test timeout", unit = "seconds", default = 300 }
-  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 0 }
+  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 10 }
+  bandwidth    = { type = "int", desc = "link bandwidth between peers", unit = "MB", default = 1 }
   auto_refresh = { type = "bool", desc = "enable DHT routing table autorefresh", unit = "bool", default = true }
   random_walk  = { type = "bool", desc = "run 5 random walks before the test", unit = "bool", default = false }
   bucket_size  = { type = "int", desc = "routing table bucket size", unit = "peers", default = 2 }
@@ -121,8 +119,6 @@ instances = { min = 16, max = 10000, default = 16 }
   undialable   = { type = "bool", desc = "node is undialable", unit = "bool", default = false}
   group_order  = { type = "int", desc = "the order in which the node is bootstrapped, may be tied with another node", unit ="int", default = 0}
   expect_dht   = { type = "bool", desc = "the node expects to be a dht server", unit ="bool", default = true}
-
-  n_find_peers = { type = "int", desc = "number of peers to find", unit = "peers", default = 1 }
 
 [[testcases]]
 name = "fault-scout-test"
@@ -130,7 +126,8 @@ instances = { min = 16, max = 10000, default = 16 }
 
   [testcases.params]
   timeout_secs = { type = "int", desc = "test timeout", unit = "seconds", default = 300 }
-  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 0 }
+  latency      = { type = "int", desc = "latency between peers", unit = "ms", default = 10 }
+  bandwidth    = { type = "int", desc = "link bandwidth between peers", unit = "MB", default = 1 }
   auto_refresh = { type = "bool", desc = "enable DHT routing table autorefresh", unit = "bool", default = true }
   random_walk  = { type = "bool", desc = "run 5 random walks before the test", unit = "bool", default = false }
   bucket_size  = { type = "int", desc = "routing table bucket size", unit = "peers", default = 2 }
@@ -144,5 +141,3 @@ instances = { min = 16, max = 10000, default = 16 }
   undialable   = { type = "bool", desc = "node is undialable", unit = "bool", default = false}
   group_order  = { type = "int", desc = "the order in which the node is bootstrapped, may be tied with another node", unit ="int", default = 0}
   expect_dht   = { type = "bool", desc = "the node expects to be a dht server", unit ="bool", default = true}
-
-  n_find_peers = { type = "int", desc = "number of peers to find", unit = "peers", default = 1 }

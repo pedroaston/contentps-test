@@ -149,7 +149,7 @@ def plot_memory_metric(scenario):
     ax.yaxis.grid(True, color='#EEEEEE')
     ax.xaxis.grid(False)
 
-    ax.set_ylabel('# bytes used', labelpad=20)
+    ax.set_ylabel('# MB used', labelpad=20)
     ax.set_xlabel('Variants', labelpad=20)
     ax.set_title('Memory used by pubsub', pad=30, fontsize=20)
 

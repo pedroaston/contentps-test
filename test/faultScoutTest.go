@@ -65,7 +65,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	variant := "RR"
-	ps := pubsub.NewPubSub(ri.Node.dht, Region(ri.Node.info.Seq%3).String())
+	ps := pubsub.NewPubSub(ri.Node.dht, "PT")
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
@@ -150,7 +150,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	runenv.R().RecordPoint("Avg event latency - ScoutSubs fault"+variant, float64(latScout))
 	runenv.R().RecordPoint("Avg time to sub - ScoutSubs fault"+variant, float64(ps.ReturnSubStats()))
 	runenv.R().RecordPoint("CPU used - ScoutSubs fault"+variant, finalCpu[0].User-initCpu[0].User)
-	runenv.R().RecordPoint("Memory used - ScoutSubs fault"+variant, float64(finalMem.Used)-float64(initMem.Used))
+	runenv.R().RecordPoint("Memory used - ScoutSubs fault"+variant, float64(finalMem.Used-initMem.Used)/(1024*1024))
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err5thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
