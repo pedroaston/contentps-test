@@ -48,6 +48,24 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
+	variant := "BU"
+	var expectedE []string
+	// Expected events
+	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
+	case "sub-group-1":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Portugal has the world's best waves!")
+	case "sub-group-2":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!")
+	case "sub-group-3":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Surf trip to bali for 1050, just today!")
+	case "sub-group-4":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Surf trip to bali for 1050, just today!")
+	case "sub-group-5":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Surf trip to bali for 1050, just today!")
+	case "sub-group-6":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Surf trip to bali for 1050, just today!")
+	}
+
 	ri.Client.MustSignalEntry(ctx, readyState)
 	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
 	if err != nil {
@@ -63,7 +81,6 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "BU"
 	ps := pubsub.NewPubSub(ri.Node.dht, "PT")
 
 	ri.Client.MustSignalEntry(ctx, createdState)
@@ -151,14 +168,18 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	nEScout, _, latScout, _ := ps.ReturnReceivedEventsStats()
-	runenv.R().RecordPoint("Number of peers - ScoutSubs subBurst"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
+	// TODO
+	//events := ps.ReturnEventStats()
+	//subs := ps.ReturnSubStats()
+	missed, duplicated := ps.ReturnCorrectnessStats(expectedE)
+	runenv.R().RecordPoint("# Peers - ScoutSubs subBurst"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
-	runenv.R().RecordPoint("Events received - ScoutSubs subBurst"+variant, float64(nEScout))
-	runenv.R().RecordPoint("Avg event latency - ScoutSubs subBurst"+variant, float64(latScout))
-	runenv.R().RecordPoint("Avg time to sub - ScoutSubs subBurst"+variant, float64(ps.ReturnSubStats()))
 	runenv.R().RecordPoint("CPU used - ScoutSubs subBurst"+variant, finalCpu[0].User-initCpu[0].User)
 	runenv.R().RecordPoint("Memory used - ScoutSubs subBurst"+variant, float64(finalMem.Used-initMem.Used)/(1024*1024))
+	runenv.R().RecordPoint("# Events Missing - ScoutSubs subBurst"+variant, float64(missed))
+	runenv.R().RecordPoint("# Events Duplicated - ScoutSubs subBurst"+variant, float64(duplicated))
+
+	// TODO >> Save metrics
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err4thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C

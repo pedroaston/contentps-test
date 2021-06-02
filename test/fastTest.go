@@ -46,6 +46,23 @@ func TestFastDelivery(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
+	var expectedE []string
+	// Expected events
+	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
+	case "sub-group-1":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Portugal has the world's best waves!", "Surf trip to bali for 1200€, only today!")
+	case "sub-group-2":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Portugal has the world's best waves!")
+	case "sub-group-3":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1200€, only today!")
+	case "sub-group-4":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1200€, only today!")
+	case "sub-group-5":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!")
+	case "sub-group-6":
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1200€, only today!")
+	}
+
 	ri.Client.MustSignalEntry(ctx, readyState)
 	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
 	if err != nil {
@@ -144,16 +161,19 @@ func TestFastDelivery(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	_, nEFast, _, latFast := ps.ReturnReceivedEventsStats()
+	// TODO >> whatever
+	//events := ps.ReturnEventStats()
+	//subs := ps.ReturnSubStats()
+
+	missed, duplicated := ps.ReturnCorrectnessStats(expectedE)
 	runenv.R().RecordPoint("Number of peers", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
-	runenv.R().RecordPoint("Avg time to sub - FastDelivery", float64(0))
-	runenv.R().RecordPoint("Events received - FastDelivery", float64(nEFast))
-	runenv.R().RecordPoint("Avg event latency - FastDelivery", float64(latFast))
-	runenv.R().RecordPoint("Avg time to sub - FastDelivery", float64(ps.ReturnSubStats()))
 	runenv.R().RecordPoint("CPU used - FastDelivery", finalCpu[0].User-initCpu[0].User)
 	runenv.R().RecordPoint("Memory used - FastDelivery", float64(finalMem.Used-initMem.Used)/(1024*1024))
-	time.Sleep(100 * time.Millisecond)
+	runenv.R().RecordPoint("# Events Missing - FastDelivery", float64(missed))
+	runenv.R().RecordPoint("# Events Duplicated - FastDelivery", float64(duplicated))
+
+	// TODO >> Save metrics
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err5thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C

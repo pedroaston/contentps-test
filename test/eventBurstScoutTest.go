@@ -49,6 +49,24 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
+	variant := "BU"
+	var expectedE int
+	// Expected events
+	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
+	case "sub-group-1":
+		expectedE = 9
+	case "sub-group-2":
+		expectedE = 8
+	case "sub-group-3":
+		expectedE = 8
+	case "sub-group-4":
+		expectedE = 8
+	case "sub-group-5":
+		expectedE = 10
+	case "sub-group-6":
+		expectedE = 8
+	}
+
 	ri.Client.MustSignalEntry(ctx, readyState)
 	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
 	if err != nil {
@@ -64,7 +82,6 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "BU"
 	ps := pubsub.NewPubSub(ri.Node.dht, "PT")
 
 	ri.Client.MustSignalEntry(ctx, createdState)
@@ -142,14 +159,22 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	nEScout, _, latScout, _ := ps.ReturnReceivedEventsStats()
-	runenv.R().RecordPoint("Number of peers - ScoutSubs eventBurst"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
+	eventStats := ps.ReturnEventStats()
+	nEScout := len(eventStats)
+	runenv.R().RecordPoint("# Peers - ScoutSubs eventBurst"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
-	runenv.R().RecordPoint("Events received - ScoutSubs eventBurst"+variant, float64(nEScout))
-	runenv.R().RecordPoint("Avg event latency - ScoutSubs eventBurst"+variant, float64(latScout))
-	runenv.R().RecordPoint("Avg time to sub - ScoutSubs eventBurst"+variant, float64(ps.ReturnSubStats()))
 	runenv.R().RecordPoint("CPU used - ScoutSubs eventBurst"+variant, finalCpu[0].User-initCpu[0].User)
 	runenv.R().RecordPoint("Memory used - ScoutSubs eventBurst"+variant, float64(finalMem.Used-initMem.Used)/(1024*1024))
+
+	// TODO >> need to register event latency
+
+	if expectedE > nEScout {
+		runenv.R().RecordPoint("# Events Missing - ScoutSubs eventBurst"+variant, float64(expectedE-nEScout))
+		runenv.R().RecordPoint("# Events Duplicated - ScoutSubs eventBurst"+variant, float64(0))
+	} else {
+		runenv.R().RecordPoint("# Events Missing - ScoutSubs eventBurst"+variant, float64(0))
+		runenv.R().RecordPoint("# Events Duplicated - ScoutSubs eventBurst"+variant, float64(nEScout-expectedE))
+	}
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err4thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C

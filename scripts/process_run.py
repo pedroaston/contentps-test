@@ -8,39 +8,39 @@ import seaborn as sns
 ## Auxiliar data structures ##
 ##############################
 metric_types = {"fast": ['Avg time to sub - FastDelivery', 'Avg event latency - FastDelivery', 
-'CPU used - FastDelivery', 'Memory used - FastDelivery'],
- "normal_scout_BU": ['Avg event latency - ScoutSubs normalBU',
-'CPU used - ScoutSubs normalBU', 'Memory used - ScoutSubs normalBU'],
- "normal_scout_RU": ['Avg event latency - ScoutSubs normalRU',
-'CPU used - ScoutSubs normalRU', 'Memory used - ScoutSubs normalRU'],
- "normal_scout_BR": ['Avg event latency - ScoutSubs normalBR', 'Avg time to sub - ScoutSubs normalBR',
-'CPU used - ScoutSubs normalBR', 'Memory used - ScoutSubs normalBR'],
- "normal_scout_RR": ['Avg event latency - ScoutSubs normalRR', 'Avg time to sub - ScoutSubs normalRR',
-'CPU used - ScoutSubs normalRR', 'Memory used - ScoutSubs normalRR'],
- "subBurst_scout_BU": ['Avg event latency - ScoutSubs subBurstBU',  
-'CPU used - ScoutSubs subBurstBU', 'Memory used - ScoutSubs subBurstBU'],
- "subBurst_scout_RU": ['Avg event latency - ScoutSubs subBurstRU',  
-'CPU used - ScoutSubs subBurstRU', 'Memory used - ScoutSubs subBurstRU'],
- "subBurst_scout_BR": ['Avg event latency - ScoutSubs subBurstBR', 'Avg time to sub - ScoutSubs subBurstBR', 
-'CPU used - ScoutSubs subBurstBR', 'Memory used - ScoutSubs subBurstBR'],
- "subBurst_scout_RR": ['Avg event latency - ScoutSubs subBurstRR', 'Avg time to sub - ScoutSubs subBurstRR', 
-'CPU used - ScoutSubs subBurstRR', 'Memory used - ScoutSubs subBurstRR'],
- "eventBurst_scout_BU": ['Avg event latency - ScoutSubs eventBurstBU', 
-'CPU used - ScoutSubs eventBurstBU', 'Memory used - ScoutSubs eventBurstBU'],
- "eventBurst_scout_RU": ['Avg event latency - ScoutSubs eventBurstRU', 
-'CPU used - ScoutSubs eventBurstRU', 'Memory used - ScoutSubs eventBurstRU'],
- "eventBurst_scout_BR": ['Avg event latency - ScoutSubs eventBurstBR', 'Avg time to sub - ScoutSubs eventBurstBR',
-'CPU used - ScoutSubs eventBurstBR', 'Memory used - ScoutSubs eventBurstBR'],
- "eventBurst_scout_RR": ['Avg event latency - ScoutSubs eventBurstRR', 'Avg time to sub - ScoutSubs eventBurstRR',
-'CPU used - ScoutSubs eventBurstRR', 'Memory used - ScoutSubs eventBurstRR'],
- "fault_scout_BU": ['Avg event latency - ScoutSubs faultBU', 
-'CPU used - ScoutSubs faultBU', 'Memory used - ScoutSubs faultBU'],
- "fault_scout_RU": ['Avg event latency - ScoutSubs faultRU', 
-'CPU used - ScoutSubs faultRU', 'Memory used - ScoutSubs faultRU'],
- "fault_scout_BR": ['Avg event latency - ScoutSubs faultBR', 'Avg time to sub - ScoutSubs faultBR',
-'CPU used - ScoutSubs faultBR', 'Memory used - ScoutSubs faultBR'],
- "fault_scout_RR": ['Avg event latency - ScoutSubs faultRR', 'Avg time to sub - ScoutSubs faultRR',
-'CPU used - ScoutSubs faultRR', 'Memory used - ScoutSubs faultRR']}
+ 'CPU used - FastDelivery', 'Memory used - FastDelivery'],
+"normal_scout_BU": ['Avg event latency - ScoutSubs normalBU', 'CPU used - ScoutSubs normalBU',
+ 'Memory used - ScoutSubs normalBU', '# Events Missing - ScoutSubs normalBU','# Events Duplicated - ScoutSubs normalBU'],
+"normal_scout_RU": ['Avg event latency - ScoutSubs normalRU','CPU used - ScoutSubs normalRU',
+ 'Memory used - ScoutSubs normalRU', '# Events Missing - ScoutSubs normalRU','# Events Duplicated - ScoutSubs normalRU'],
+"normal_scout_BR": ['Avg event latency - ScoutSubs normalBR', 'Avg time to sub - ScoutSubs normalBR', 'CPU used - ScoutSubs normalBR',
+ 'Memory used - ScoutSubs normalBR', '# Events Missing - ScoutSubs normalBR','# Events Duplicated - ScoutSubs normalBR'],
+"normal_scout_RR": ['Avg event latency - ScoutSubs normalRR', 'Avg time to sub - ScoutSubs normalRR', 'CPU used - ScoutSubs normalRR', 
+ 'Memory used - ScoutSubs normalRR', '# Events Missing - ScoutSubs normalRR','# Events Duplicated - ScoutSubs normalRR'],
+"subBurst_scout_BU": ['Avg event latency - ScoutSubs subBurstBU', 'CPU used - ScoutSubs subBurstBU', 'Memory used - ScoutSubs subBurstBU',
+ '# Events Missing - ScoutSubs subBurstBU','# Events Duplicated - ScoutSubs subBurstBU'],
+"subBurst_scout_RU": ['Avg event latency - ScoutSubs subBurstRU', 'CPU used - ScoutSubs subBurstRU', 'Memory used - ScoutSubs subBurstRU',
+ '# Events Missing - ScoutSubs subBurstRU','# Events Duplicated - ScoutSubs subBurstRU'],
+"subBurst_scout_BR": ['Avg event latency - ScoutSubs subBurstBR', 'Avg time to sub - ScoutSubs subBurstBR', 'CPU used - ScoutSubs subBurstBR',
+ 'Memory used - ScoutSubs subBurstBR', '# Events Missing - ScoutSubs subBurstBR','# Events Duplicated - ScoutSubs subBurstBR'],
+"subBurst_scout_RR": ['Avg event latency - ScoutSubs subBurstRR', 'Avg time to sub - ScoutSubs subBurstRR', 'CPU used - ScoutSubs subBurstRR',
+ 'Memory used - ScoutSubs subBurstRR', '# Events Missing - ScoutSubs subBurstRR','# Events Duplicated - ScoutSubs subBurstRR'],
+"eventBurst_scout_BU": ['Avg event latency - ScoutSubs eventBurstBU', 'CPU used - ScoutSubs eventBurstBU', 'Memory used - ScoutSubs eventBurstBU',
+ '# Events Missing - ScoutSubs eventBurstBU','# Events Duplicated - ScoutSubs eventBurstBU'],
+"eventBurst_scout_RU": ['Avg event latency - ScoutSubs eventBurstRU', 'CPU used - ScoutSubs eventBurstRU', 'Memory used - ScoutSubs eventBurstRU',
+ '# Events Missing - ScoutSubs eventBurstRU','# Events Duplicated - ScoutSubs eventBurstRU'],
+"eventBurst_scout_BR": ['Avg event latency - ScoutSubs eventBurstBR', 'Avg time to sub - ScoutSubs eventBurstBR', 'CPU used - ScoutSubs eventBurstBR',
+ 'Memory used - ScoutSubs eventBurstBR', '# Events Missing - ScoutSubs eventBurstBR','# Events Duplicated - ScoutSubs eventBurstBR'],
+"eventBurst_scout_RR": ['Avg event latency - ScoutSubs eventBurstRR', 'Avg time to sub - ScoutSubs eventBurstRR', 'CPU used - ScoutSubs eventBurstRR',
+ 'Memory used - ScoutSubs eventBurstRR', '# Events Missing - ScoutSubs eventBurstRR','# Events Duplicated - ScoutSubs eventBurstRR'],
+"fault_scout_BU": ['Avg event latency - ScoutSubs faultBU', 'CPU used - ScoutSubs faultBU', 'Memory used - ScoutSubs faultBU',
+ '# Events Missing - ScoutSubs faultBU','# Events Duplicated - ScoutSubs faultBU'],
+"fault_scout_RU": ['Avg event latency - ScoutSubs faultRU', 'CPU used - ScoutSubs faultRU', 'Memory used - ScoutSubs faultRU',
+ '# Events Missing - ScoutSubs faultRU','# Events Duplicated - ScoutSubs faultRU'],
+"fault_scout_BR": ['Avg event latency - ScoutSubs faultBR', 'Avg time to sub - ScoutSubs faultBR', 'CPU used - ScoutSubs faultBR',
+ 'Memory used - ScoutSubs faultBR', '# Events Missing - ScoutSubs faultBR','# Events Duplicated - ScoutSubs faultBR'],
+"fault_scout_RR": ['Avg event latency - ScoutSubs faultRR', 'Avg time to sub - ScoutSubs faultRR', 'CPU used - ScoutSubs faultRR',
+ 'Memory used - ScoutSubs faultRR', '# Events Missing - ScoutSubs faultRR','# Events Duplicated - ScoutSubs faultRR']}
 
 ########################################################
 ## Interprets a line (metric) from a results.out file ##
@@ -132,8 +132,8 @@ def plot_memory_metric(scenario):
     width = 0.4  # the width of the bars
 
     
-    rects1 = ax.bar(x - width/2, mean_values, width, label='mean')
-    rects2 = ax.bar(x + width/2, max_values, width, label='max')
+    ax.bar(x - width/2, mean_values, width, label='mean')
+    ax.bar(x + width/2, max_values, width, label='max')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_xticks(x)
@@ -197,8 +197,8 @@ def plot_cpu_metric(scenario):
     x = np.arange(len(labels))  # the label locations
     width = 0.4  # the width of the bars
 
-    rects1 = ax.bar(x - width/2, mean_values, width, label='mean')
-    rects2 = ax.bar(x + width/2, max_values, width, label='max')
+    ax.bar(x - width/2, mean_values, width, label='mean')
+    ax.bar(x + width/2, max_values, width, label='max')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_xticks(x)
@@ -262,8 +262,8 @@ def plot_latency_metric(scenario):
     x = np.arange(len(labels))  # the label locations
     width = 0.4  # the width of the bars
 
-    rects1 = ax.bar(x - width/2, mean_values, width, label='mean')
-    rects2 = ax.bar(x + width/2, max_values, width, label='max')
+    ax.bar(x - width/2, mean_values, width, label='mean')
+    ax.bar(x + width/2, max_values, width, label='max')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_xticks(x)
@@ -282,6 +282,70 @@ def plot_latency_metric(scenario):
     ax.set_ylabel('event latency (ms)', labelpad=20)
     ax.set_xlabel('Variants', labelpad=20)
     ax.set_title('Event latency with pubsub', pad=30, fontsize=20)
+
+    for bar in ax.patches:
+        # The text annotation for each bar should be its height.
+        bar_value = bar.get_height()
+        # Format the text with commas to separate thousands. You can do
+        # any type of formatting here though.
+        text = f'{bar_value:.0f}'
+        # This will give the middle of each bar on the x-axis.
+        text_x = bar.get_x() + bar.get_width() / 2
+        # get_y() is where the bar starts so we add the height to it.
+        text_y = bar.get_y() + bar_value
+        # If we want the text to be the same color as the bar, we can
+        # get the color like so:
+        bar_color = bar.get_facecolor()
+        # If you want a consistent color, you can just set it as a constant, e.g. #222222
+        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color,
+                size=12)
+
+    fig.tight_layout()
+    plt.show()
+
+##############################
+## Correctness metrics plot ##
+##############################
+def plot_correctness_metrics(scenario):
+    fast_res = metric_summary("fast")
+    scout_res_BU = metric_summary(scenario + "_scout_BU")
+    scout_res_BR = metric_summary(scenario + "_scout_BR")
+    scout_res_RU = metric_summary(scenario + "_scout_RU")
+    scout_res_RR = metric_summary(scenario + "_scout_RR")
+
+    labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
+    mean_values = [fast_res['# Events Missing - FastDelivery/mean'], scout_res_BU['# Events Missing - ScoutSubs '+scenario+'BU/mean'],
+     scout_res_BR['# Events Missing - ScoutSubs '+scenario+'BR/mean'], scout_res_RU['# Events Missing - ScoutSubs '+scenario+'RU/mean'],
+     scout_res_RR['# Events Missing - ScoutSubs '+scenario+'RR/mean']]
+    max_values = [fast_res['# Events Duplicated - FastDelivery/max'],scout_res_BU['# Events Duplicated - ScoutSubs '+scenario+'BU/max'],
+     scout_res_BR['# Events Duplicated - ScoutSubs '+scenario+'BR/max'], scout_res_RU['# Events Duplicated - ScoutSubs '+scenario+'RU/max'],
+     scout_res_RR['# Events Duplicated - ScoutSubs '+scenario+'RR/max']]
+
+    sns.set_context('talk', font_scale = 0.75)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    x = np.arange(len(labels))  # the label locations
+    width = 0.4  # the width of the bars
+
+    ax.bar(x - width/2, mean_values, width, label='missing')
+    ax.bar(x + width/2, max_values, width, label='duplicated')
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_color('#DDDDDD')
+    ax.tick_params(bottom=False, left=False)
+    ax.set_axisbelow(True)
+    ax.yaxis.grid(True, color='#EEEEEE')
+    ax.xaxis.grid(False)
+
+    ax.set_ylabel('# Events', labelpad=20)
+    ax.set_xlabel('Variants', labelpad=20)
+    ax.set_title('Pubsub Correctness', pad=30, fontsize=20)
 
     for bar in ax.patches:
         # The text annotation for each bar should be its height.
