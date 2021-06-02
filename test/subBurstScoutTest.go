@@ -168,9 +168,8 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	// TODO
-	//events := ps.ReturnEventStats()
-	//subs := ps.ReturnSubStats()
+	events := ps.ReturnEventStats()
+	subs := ps.ReturnSubStats()
 	missed, duplicated := ps.ReturnCorrectnessStats(expectedE)
 	runenv.R().RecordPoint("# Peers - ScoutSubs subBurst"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
@@ -179,7 +178,12 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	runenv.R().RecordPoint("# Events Missing - ScoutSubs subBurst"+variant, float64(missed))
 	runenv.R().RecordPoint("# Events Duplicated - ScoutSubs subBurst"+variant, float64(duplicated))
 
-	// TODO >> Save metrics
+	for _, ev := range events {
+		runenv.R().RecordPoint("Event Latency - ScoutSubs subBurst"+variant, float64(ev))
+	}
+	for _, sb := range subs {
+		runenv.R().RecordPoint("Sub Latency - ScoutSubs subBurst"+variant, float64(sb))
+	}
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err4thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C

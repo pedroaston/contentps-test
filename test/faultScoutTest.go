@@ -162,10 +162,8 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	if ri.RunInfo.RunEnv.RunParams.TestGroupID != "sub-group-6" {
 
-		// TODO >> Save this metrics
-		//events := ps.ReturnEventStats()
-		//subs := ps.ReturnSubStats()
-
+		events := ps.ReturnEventStats()
+		subs := ps.ReturnSubStats()
 		missed, duplicated := ps.ReturnCorrectnessStats(expectedE)
 		runenv.R().RecordPoint("# Peers - ScoutSubs fault"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 		runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
@@ -173,6 +171,13 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Memory used - ScoutSubs fault"+variant, float64(finalMem.Used-initMem.Used)/(1024*1024))
 		runenv.R().RecordPoint("# Events Missing - ScoutSubs fault"+variant, float64(missed))
 		runenv.R().RecordPoint("# Events Duplicated - ScoutSubs fault"+variant, float64(duplicated))
+
+		for _, ev := range events {
+			runenv.R().RecordPoint("Event Latency - ScoutSubs fault"+variant, float64(ev))
+		}
+		for _, sb := range subs {
+			runenv.R().RecordPoint("Sub Latency - ScoutSubs fault"+variant, float64(sb))
+		}
 	}
 
 	ri.Client.MustSignalEntry(ctx, recordedState)

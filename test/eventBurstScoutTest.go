@@ -159,14 +159,20 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	eventStats := ps.ReturnEventStats()
-	nEScout := len(eventStats)
+	events := ps.ReturnEventStats()
+	subs := ps.ReturnSubStats()
+	nEScout := len(events)
 	runenv.R().RecordPoint("# Peers - ScoutSubs eventBurst"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
 	runenv.R().RecordPoint("CPU used - ScoutSubs eventBurst"+variant, finalCpu[0].User-initCpu[0].User)
 	runenv.R().RecordPoint("Memory used - ScoutSubs eventBurst"+variant, float64(finalMem.Used-initMem.Used)/(1024*1024))
 
-	// TODO >> need to register event latency
+	for _, ev := range events {
+		runenv.R().RecordPoint("Event Latency - ScoutSubs eventBurst"+variant, float64(ev))
+	}
+	for _, sb := range subs {
+		runenv.R().RecordPoint("Sub Latency - ScoutSubs eventBurst"+variant, float64(sb))
+	}
 
 	if expectedE > nEScout {
 		runenv.R().RecordPoint("# Events Missing - ScoutSubs eventBurst"+variant, float64(expectedE-nEScout))

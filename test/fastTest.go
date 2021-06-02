@@ -161,10 +161,8 @@ func TestFastDelivery(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	// TODO >> whatever
-	//events := ps.ReturnEventStats()
-	//subs := ps.ReturnSubStats()
-
+	events := ps.ReturnEventStats()
+	subs := ps.ReturnSubStats()
 	missed, duplicated := ps.ReturnCorrectnessStats(expectedE)
 	runenv.R().RecordPoint("Number of peers", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
@@ -173,7 +171,12 @@ func TestFastDelivery(ctx context.Context, ri *DHTRunInfo) error {
 	runenv.R().RecordPoint("# Events Missing - FastDelivery", float64(missed))
 	runenv.R().RecordPoint("# Events Duplicated - FastDelivery", float64(duplicated))
 
-	// TODO >> Save metrics
+	for _, ev := range events {
+		runenv.R().RecordPoint("Event Latency - FastDelivery", float64(ev))
+	}
+	for _, sb := range subs {
+		runenv.R().RecordPoint("Sub Latency - FastDelivery", float64(sb))
+	}
 
 	ri.Client.MustSignalEntry(ctx, recordedState)
 	err5thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
