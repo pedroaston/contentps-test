@@ -7,40 +7,8 @@ import seaborn as sns
 ##############################
 ## Auxiliar data structures ##
 ##############################
-metric_types = {"fast": ['Avg time to sub - FastDelivery', 'Avg event latency - FastDelivery', 
- 'CPU used - FastDelivery', 'Memory used - FastDelivery'],
-"normal_scout_BU": ['Avg event latency - ScoutSubs normalBU', 'CPU used - ScoutSubs normalBU',
- 'Memory used - ScoutSubs normalBU', '# Events Missing - ScoutSubs normalBU','# Events Duplicated - ScoutSubs normalBU'],
-"normal_scout_RU": ['Avg event latency - ScoutSubs normalRU','CPU used - ScoutSubs normalRU',
- 'Memory used - ScoutSubs normalRU', '# Events Missing - ScoutSubs normalRU','# Events Duplicated - ScoutSubs normalRU'],
-"normal_scout_BR": ['Avg event latency - ScoutSubs normalBR', 'Avg time to sub - ScoutSubs normalBR', 'CPU used - ScoutSubs normalBR',
- 'Memory used - ScoutSubs normalBR', '# Events Missing - ScoutSubs normalBR','# Events Duplicated - ScoutSubs normalBR'],
-"normal_scout_RR": ['Avg event latency - ScoutSubs normalRR', 'Avg time to sub - ScoutSubs normalRR', 'CPU used - ScoutSubs normalRR', 
- 'Memory used - ScoutSubs normalRR', '# Events Missing - ScoutSubs normalRR','# Events Duplicated - ScoutSubs normalRR'],
-"subBurst_scout_BU": ['Avg event latency - ScoutSubs subBurstBU', 'CPU used - ScoutSubs subBurstBU', 'Memory used - ScoutSubs subBurstBU',
- '# Events Missing - ScoutSubs subBurstBU','# Events Duplicated - ScoutSubs subBurstBU'],
-"subBurst_scout_RU": ['Avg event latency - ScoutSubs subBurstRU', 'CPU used - ScoutSubs subBurstRU', 'Memory used - ScoutSubs subBurstRU',
- '# Events Missing - ScoutSubs subBurstRU','# Events Duplicated - ScoutSubs subBurstRU'],
-"subBurst_scout_BR": ['Avg event latency - ScoutSubs subBurstBR', 'Avg time to sub - ScoutSubs subBurstBR', 'CPU used - ScoutSubs subBurstBR',
- 'Memory used - ScoutSubs subBurstBR', '# Events Missing - ScoutSubs subBurstBR','# Events Duplicated - ScoutSubs subBurstBR'],
-"subBurst_scout_RR": ['Avg event latency - ScoutSubs subBurstRR', 'Avg time to sub - ScoutSubs subBurstRR', 'CPU used - ScoutSubs subBurstRR',
- 'Memory used - ScoutSubs subBurstRR', '# Events Missing - ScoutSubs subBurstRR','# Events Duplicated - ScoutSubs subBurstRR'],
-"eventBurst_scout_BU": ['Avg event latency - ScoutSubs eventBurstBU', 'CPU used - ScoutSubs eventBurstBU', 'Memory used - ScoutSubs eventBurstBU',
- '# Events Missing - ScoutSubs eventBurstBU','# Events Duplicated - ScoutSubs eventBurstBU'],
-"eventBurst_scout_RU": ['Avg event latency - ScoutSubs eventBurstRU', 'CPU used - ScoutSubs eventBurstRU', 'Memory used - ScoutSubs eventBurstRU',
- '# Events Missing - ScoutSubs eventBurstRU','# Events Duplicated - ScoutSubs eventBurstRU'],
-"eventBurst_scout_BR": ['Avg event latency - ScoutSubs eventBurstBR', 'Avg time to sub - ScoutSubs eventBurstBR', 'CPU used - ScoutSubs eventBurstBR',
- 'Memory used - ScoutSubs eventBurstBR', '# Events Missing - ScoutSubs eventBurstBR','# Events Duplicated - ScoutSubs eventBurstBR'],
-"eventBurst_scout_RR": ['Avg event latency - ScoutSubs eventBurstRR', 'Avg time to sub - ScoutSubs eventBurstRR', 'CPU used - ScoutSubs eventBurstRR',
- 'Memory used - ScoutSubs eventBurstRR', '# Events Missing - ScoutSubs eventBurstRR','# Events Duplicated - ScoutSubs eventBurstRR'],
-"fault_scout_BU": ['Avg event latency - ScoutSubs faultBU', 'CPU used - ScoutSubs faultBU', 'Memory used - ScoutSubs faultBU',
- '# Events Missing - ScoutSubs faultBU','# Events Duplicated - ScoutSubs faultBU'],
-"fault_scout_RU": ['Avg event latency - ScoutSubs faultRU', 'CPU used - ScoutSubs faultRU', 'Memory used - ScoutSubs faultRU',
- '# Events Missing - ScoutSubs faultRU','# Events Duplicated - ScoutSubs faultRU'],
-"fault_scout_BR": ['Avg event latency - ScoutSubs faultBR', 'Avg time to sub - ScoutSubs faultBR', 'CPU used - ScoutSubs faultBR',
- 'Memory used - ScoutSubs faultBR', '# Events Missing - ScoutSubs faultBR','# Events Duplicated - ScoutSubs faultBR'],
-"fault_scout_RR": ['Avg event latency - ScoutSubs faultRR', 'Avg time to sub - ScoutSubs faultRR', 'CPU used - ScoutSubs faultRR',
- 'Memory used - ScoutSubs faultRR', '# Events Missing - ScoutSubs faultRR','# Events Duplicated - ScoutSubs faultRR']}
+avgMetrics = ['CPU used', 'Memory used', 'Event Latency', 'Sub Latency']
+cumMetrics = ['# Events Missing', '# Events Duplicated']
 
 ########################################################
 ## Interprets a line (metric) from a results.out file ##
@@ -66,7 +34,7 @@ def aggregate_results(results_dir):
                 resultFile = open(filepath, 'r')
                 for l in resultFile.readlines():
                     item = process_results_line(l)
-                    if item["value"] > 0:
+                    if item["value"] >= 0:
                         res.append(item)
     return res
 
@@ -75,25 +43,37 @@ def aggregate_results(results_dir):
 ## max for each run and averages it among the different executed runs        ##
 ###############################################################################
 def digested_results(res, test):
-    
+
+    testAvgMetrics = []
+    for m in avgMetrics:
+        testAvgMetrics.append("{0} - {1}".format(m, test))
+    testCumMetrics = []
+    for m in cumMetrics:
+        testCumMetrics.append("{0} - {1}".format(m, test))
+
     summary = {}
     final_data = {}
     num_metrics = {}
     
-    for measure in test:
+    for measure in testAvgMetrics:
         summary[measure] = 0
         num_metrics[measure] = 0
-        final_data[measure + "/max"] = 0
+    for measure in testCumMetrics:
+        final_data[measure] = 0
+
     for item in res:
-        if item["name"] in test:
+        if item["name"] in testAvgMetrics:
             num_metrics[item["name"]] += 1
             summary[item["name"]] += item["value"]
-            if item["value"] > final_data[item["name"] + "/max"]:
-                final_data[item["name"] + "/max"] = item["value"]
+        elif item["name"] in testCumMetrics:
+            final_data[item["name"]] += item["value"]
+
 
     for sums in summary:
         if num_metrics[sums] != 0:
             final_data[sums + "/mean"] = summary[sums]/num_metrics[sums]
+        else :
+            final_data[sums + "/mean"] = 0
 
     return final_data
 
@@ -103,7 +83,7 @@ def digested_results(res, test):
 def metric_summary(type):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     agg = aggregate_results(dir_path + "/../../../data/outputs/local_docker/contentps-test/")
-    final_res = digested_results(agg, metric_types[type])
+    final_res = digested_results(agg, type)
     return final_res
 
 #########################
@@ -111,10 +91,10 @@ def metric_summary(type):
 #########################
 def plot_memory_metric(scenario):
     fast_res = metric_summary("fast")
-    scout_res_BU = metric_summary(scenario + "_scout_BU")
-    scout_res_BR = metric_summary(scenario + "_scout_BR")
-    scout_res_RU = metric_summary(scenario + "_scout_RU")
-    scout_res_RR = metric_summary(scenario + "_scout_RR")
+    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
+    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
+    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
+    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
 
     labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
     mean_values = [fast_res['Memory used - FastDelivery/mean'], scout_res_BU['Memory used - ScoutSubs '+scenario+'BU/mean'],
