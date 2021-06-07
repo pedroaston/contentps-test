@@ -32,6 +32,7 @@ func FastTest(runenv *runtime.RunEnv) error {
 }
 
 func TestFastDelivery(ctx context.Context, ri *DHTRunInfo) error {
+
 	runenv := ri.RunEnv
 	readyState := sync.State("ready")
 	createdState := sync.State("created")
@@ -78,7 +79,7 @@ func TestFastDelivery(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, "PT")
+	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT"))
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C

@@ -48,7 +48,7 @@ func TestNormalScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "BU"
+	variant := "RR"
 	var expectedE []string
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -81,7 +81,7 @@ func TestNormalScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, "PT")
+	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT"))
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C

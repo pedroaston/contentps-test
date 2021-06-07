@@ -81,7 +81,7 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, "PT")
+	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT"))
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C

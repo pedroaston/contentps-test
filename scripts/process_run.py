@@ -58,6 +58,8 @@ def digested_results(res, test):
     for measure in testAvgMetrics:
         summary[measure] = 0
         num_metrics[measure] = 0
+        final_data[measure+"/max"] = 0
+        final_data[measure+"/all"] = []
     for measure in testCumMetrics:
         final_data[measure] = 0
 
@@ -65,6 +67,9 @@ def digested_results(res, test):
         if item["name"] in testAvgMetrics:
             num_metrics[item["name"]] += 1
             summary[item["name"]] += item["value"]
+            final_data[item["name"]+"/all"].append(item["value"])
+            if final_data[item["name"]+"/max"] < item["value"]:
+                final_data[item["name"]+"/max"] = item["value"]
         elif item["name"] in testCumMetrics:
             final_data[item["name"]] += item["value"]
 
@@ -86,11 +91,36 @@ def metric_summary(type):
     final_res = digested_results(agg, type)
     return final_res
 
+###########################
+## Event Latency boxplot ##
+###########################
+def boxplot_latency(scenario):
+    fast_res = metric_summary("FastDelivery")
+    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
+    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
+    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
+    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+
+    data = [fast_res['Event Latency - FastDelivery/all'], scout_res_BU['Event Latency - ScoutSubs normalBU/all'], 
+     scout_res_BR['Event Latency - ScoutSubs normalBR/all'], scout_res_RU['Event Latency - ScoutSubs normalRU/all'],
+     scout_res_RR['Event Latency - ScoutSubs normalRR/all']]
+
+    labels = ['FastDelivery', 'Basic-Unreliable', 'Basic-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
+
+    sns.set_context('talk', font_scale = 0.75)
+    fig7, ax7 = plt.subplots(figsize=(10, 8))
+    ax7.set_title('Event Latency Results', pad=30, fontsize=20)
+    ax7.boxplot(data, labels=labels, patch_artist=True)
+    ax7.set_xlabel('Variants', labelpad=20)
+    ax7.set_ylabel('Time (ms)', labelpad=20)
+
+    plt.show()
+
 #########################
 ## Memory metrics plot ##
 #########################
 def plot_memory_metric(scenario):
-    fast_res = metric_summary("fast")
+    fast_res = metric_summary("FastDelivery")
     scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
     scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
     scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
@@ -138,7 +168,7 @@ def plot_memory_metric(scenario):
         bar_value = bar.get_height()
         # Format the text with commas to separate thousands. You can do
         # any type of formatting here though.
-        text = f'{bar_value:.2e}'
+        text = f'{bar_value:.1f}'
         # This will give the middle of each bar on the x-axis.
         text_x = bar.get_x() + bar.get_width() / 2
         # get_y() is where the bar starts so we add the height to it.
@@ -158,11 +188,11 @@ def plot_memory_metric(scenario):
 ## Cpu metrics plot ##
 ######################
 def plot_cpu_metric(scenario):
-    fast_res = metric_summary("fast")
-    scout_res_BU = metric_summary(scenario + "_scout_BU")
-    scout_res_BR = metric_summary(scenario + "_scout_BR")
-    scout_res_RU = metric_summary(scenario + "_scout_RU")
-    scout_res_RR = metric_summary(scenario + "_scout_RR")
+    fast_res = metric_summary("FastDelivery")
+    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
+    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
+    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
+    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
 
     labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
     mean_values = [fast_res['CPU used - FastDelivery/mean'], scout_res_BU['CPU used - ScoutSubs '+scenario+'BU/mean'],
@@ -223,19 +253,19 @@ def plot_cpu_metric(scenario):
 ## Avg event latency metrics plot ##
 ####################################
 def plot_latency_metric(scenario):
-    fast_res = metric_summary("fast")
-    scout_res_BU = metric_summary(scenario + "_scout_BU")
-    scout_res_BR = metric_summary(scenario + "_scout_BR")
-    scout_res_RU = metric_summary(scenario + "_scout_RU")
-    scout_res_RR = metric_summary(scenario + "_scout_RR")
+    fast_res = metric_summary("FastDelivery")
+    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
+    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
+    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
+    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
 
     labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
-    mean_values = [fast_res['Avg event latency - FastDelivery/mean'], scout_res_BU['Avg event latency - ScoutSubs '+scenario+'BU/mean'],
-     scout_res_BR['Avg event latency - ScoutSubs '+scenario+'BR/mean'], scout_res_RU['Avg event latency - ScoutSubs '+scenario+'RU/mean'],
-     scout_res_RR['Avg event latency - ScoutSubs '+scenario+'RR/mean']]
-    max_values = [fast_res['Avg event latency - FastDelivery/max'],scout_res_BU['Avg event latency - ScoutSubs '+scenario+'BU/max'],
-     scout_res_BR['Avg event latency - ScoutSubs '+scenario+'BR/max'], scout_res_RU['Avg event latency - ScoutSubs '+scenario+'RU/max'],
-     scout_res_RR['Avg event latency - ScoutSubs '+scenario+'RR/max']]
+    mean_values = [fast_res['Event Latency - FastDelivery/mean'], scout_res_BU['Event Latency - ScoutSubs '+scenario+'BU/mean'],
+     scout_res_BR['Event Latency - ScoutSubs '+scenario+'BR/mean'], scout_res_RU['Event Latency - ScoutSubs '+scenario+'RU/mean'],
+     scout_res_RR['Event Latency - ScoutSubs '+scenario+'RR/mean']]
+    max_values = [fast_res['Event Latency - FastDelivery/max'],scout_res_BU['Event Latency - ScoutSubs '+scenario+'BU/max'],
+     scout_res_BR['Event Latency - ScoutSubs '+scenario+'BR/max'], scout_res_RU['Event Latency - ScoutSubs '+scenario+'RU/max'],
+     scout_res_RR['Event Latency - ScoutSubs '+scenario+'RR/max']]
 
     sns.set_context('talk', font_scale = 0.75)
     fig, ax = plt.subplots(figsize=(12, 8))
@@ -287,19 +317,19 @@ def plot_latency_metric(scenario):
 ## Correctness metrics plot ##
 ##############################
 def plot_correctness_metrics(scenario):
-    fast_res = metric_summary("fast")
-    scout_res_BU = metric_summary(scenario + "_scout_BU")
-    scout_res_BR = metric_summary(scenario + "_scout_BR")
-    scout_res_RU = metric_summary(scenario + "_scout_RU")
-    scout_res_RR = metric_summary(scenario + "_scout_RR")
+    fast_res = metric_summary("FastDelivery")
+    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
+    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
+    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
+    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
 
     labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
-    mean_values = [fast_res['# Events Missing - FastDelivery/mean'], scout_res_BU['# Events Missing - ScoutSubs '+scenario+'BU/mean'],
-     scout_res_BR['# Events Missing - ScoutSubs '+scenario+'BR/mean'], scout_res_RU['# Events Missing - ScoutSubs '+scenario+'RU/mean'],
-     scout_res_RR['# Events Missing - ScoutSubs '+scenario+'RR/mean']]
-    max_values = [fast_res['# Events Duplicated - FastDelivery/max'],scout_res_BU['# Events Duplicated - ScoutSubs '+scenario+'BU/max'],
-     scout_res_BR['# Events Duplicated - ScoutSubs '+scenario+'BR/max'], scout_res_RU['# Events Duplicated - ScoutSubs '+scenario+'RU/max'],
-     scout_res_RR['# Events Duplicated - ScoutSubs '+scenario+'RR/max']]
+    mean_values = [fast_res['# Events Missing - FastDelivery'], scout_res_BU['# Events Missing - ScoutSubs '+scenario+'BU'],
+     scout_res_BR['# Events Missing - ScoutSubs '+scenario+'BR'], scout_res_RU['# Events Missing - ScoutSubs '+scenario+'RU'],
+     scout_res_RR['# Events Missing - ScoutSubs '+scenario+'RR']]
+    max_values = [fast_res['# Events Duplicated - FastDelivery'],scout_res_BU['# Events Duplicated - ScoutSubs '+scenario+'BU'],
+     scout_res_BR['# Events Duplicated - ScoutSubs '+scenario+'BR'], scout_res_RU['# Events Duplicated - ScoutSubs '+scenario+'RU'],
+     scout_res_RR['# Events Duplicated - ScoutSubs '+scenario+'RR']]
 
     sns.set_context('talk', font_scale = 0.75)
     fig, ax = plt.subplots(figsize=(12, 8))
