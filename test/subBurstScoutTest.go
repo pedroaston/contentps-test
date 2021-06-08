@@ -53,17 +53,17 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
 	case "sub-group-1":
-		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Portugal has the world's best waves!")
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Portugal has the world's best waves!")
 	case "sub-group-2":
-		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!")
+		expectedE = append(expectedE, "Publishing via ipfs is lit!")
 	case "sub-group-3":
-		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Surf trip to bali for 1050, just today!")
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1050, just today!")
 	case "sub-group-4":
-		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Surf trip to bali for 1050, just today!")
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1050, just today!")
 	case "sub-group-5":
-		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Surf trip to bali for 1050, just today!")
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1050, just today!")
 	case "sub-group-6":
-		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Publishing via ipfs is sublime!", "Surf trip to bali for 1050, just today!")
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1050, just today!")
 	}
 
 	ri.Client.MustSignalEntry(ctx, readyState)
@@ -81,7 +81,7 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT"))
+	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT", 10))
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
@@ -147,9 +147,9 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "pub-2":
 		ps.MyPublish("Portugal has the world's best waves!", "portugal T/surf T")
 	case "pub-3":
-		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
-	case "pub-4":
 		ps.MyPublish("Surf trip to bali for 1050, just today!", "surf T/bali T/trip T/price R 1050 1050")
+	case "pub-4":
+		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
 	}
 
 	time.Sleep(time.Second)

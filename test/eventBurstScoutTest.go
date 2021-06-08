@@ -54,17 +54,17 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
 	case "sub-group-1":
-		expectedE = 9
+		expectedE = 2 + 5
 	case "sub-group-2":
-		expectedE = 8
+		expectedE = 2 + 5
 	case "sub-group-3":
-		expectedE = 8
+		expectedE = 3
 	case "sub-group-4":
-		expectedE = 8
+		expectedE = 3 + 5
 	case "sub-group-5":
-		expectedE = 10
+		expectedE = 6
 	case "sub-group-6":
-		expectedE = 8
+		expectedE = 5 + 3
 	}
 
 	ri.Client.MustSignalEntry(ctx, readyState)
@@ -82,7 +82,7 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT"))
+	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT", 10))
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
@@ -96,16 +96,14 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("portugal T/surf T")
 		ps.MySubscribe("ipfs T")
 	case "sub-group-2":
-		ps.MySubscribe("ipfs T")
 		ps.MySubscribe("portugal T/soccer T")
-	case "sub-group-3":
 		ps.MySubscribe("ipfs T")
+	case "sub-group-3":
 		ps.MySubscribe("surf T/bali T")
 	case "sub-group-4":
 		ps.MySubscribe("ipfs T")
 		ps.MySubscribe("surf T/bali T/trip T/price R 1000 1500")
 	case "sub-group-5":
-		ps.MySubscribe("ipfs T")
 		ps.MySubscribe("surf T/trip T/price R 1000 2000")
 	case "sub-group-6":
 		ps.MySubscribe("ipfs T")
@@ -122,11 +120,13 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
 	case "sub-group-1":
-		event1 := fmt.Sprintf("I already surfed %d portuguese beaches!", ri.Node.info.Seq%100)
-		ps.MyPublish(event1, "portugal T/surf T")
+		event6 := fmt.Sprintf("Surf trip to bali for 10%d, just today!", ri.Node.info.Seq%100)
+		pred6 := fmt.Sprintf("surf T/bali T/trip T/price R 10%d 10%d", ri.Node.info.Seq%100, ri.Node.info.Seq%100)
+		ps.MyPublish(event6, pred6)
 	case "sub-group-2":
-		event2 := fmt.Sprintf("Using IPFS, is %d times cooler than flying-cars!", ri.Node.info.Seq%100)
-		ps.MyPublish(event2, "ipfs T")
+		event5 := fmt.Sprintf("Surf trip to hawai for 15%d, just today!", ri.Node.info.Seq%100)
+		pred5 := fmt.Sprintf("surf T/hawai T/trip T/price R 15%d 15%d", ri.Node.info.Seq%100, ri.Node.info.Seq%100)
+		ps.MyPublish(event5, pred5)
 	case "sub-group-3":
 		event3 := fmt.Sprintf("Using IPFS, is %d times cooler than flip-flops!", ri.Node.info.Seq%100)
 		ps.MyPublish(event3, "ipfs T")
@@ -134,13 +134,11 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		event4 := fmt.Sprintf("Portugal will score 1%d goals at the world cup!", ri.Node.info.Seq%100)
 		ps.MyPublish(event4, "portugal T/soccer T")
 	case "sub-group-5":
-		event5 := fmt.Sprintf("Surf trip to hawai for 15%d, just today!", ri.Node.info.Seq%100)
-		pred5 := fmt.Sprintf("surf T/hawai T/trip T/price R 15%d 15%d", ri.Node.info.Seq%100, ri.Node.info.Seq%100)
-		ps.MyPublish(event5, pred5)
+		event2 := fmt.Sprintf("Using IPFS, is %d times cooler than flying-cars!", ri.Node.info.Seq%100)
+		ps.MyPublish(event2, "ipfs T")
 	case "sub-group-6":
-		event6 := fmt.Sprintf("Surf trip to bali for 10%d, just today!", ri.Node.info.Seq%100)
-		pred6 := fmt.Sprintf("surf T/bali T/trip T/price R 10%d 10%d", ri.Node.info.Seq%100, ri.Node.info.Seq%100)
-		ps.MyPublish(event6, pred6)
+		event1 := fmt.Sprintf("I already surfed %d portuguese beaches!", ri.Node.info.Seq%100)
+		ps.MyPublish(event1, "portugal T/surf T")
 	}
 
 	time.Sleep(time.Second)

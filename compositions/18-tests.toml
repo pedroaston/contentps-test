@@ -4,7 +4,7 @@
 
 [global]
   plan = "contentps-test"
-  case = "fast-test"
+  case = "eventburst-scout-test"
   total_instances = 18
   builder = "docker:go"
   runner = "local:docker"
