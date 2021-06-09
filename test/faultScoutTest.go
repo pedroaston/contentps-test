@@ -49,7 +49,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "RR"
+	variant := "BU"
 	var expectedE []string
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -112,7 +112,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("surf T/trip T/price R 1000 1400")
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(2 * time.Second)
 	ri.Client.MustSignalEntry(ctx, subbedState)
 	err2ndStop := <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
 	if err2ndStop != nil {
@@ -120,8 +120,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	// Crash Routine
-	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
-	case "sub-group-6":
+	if ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-6" && ri.RunInfo.RunEnv.RunParams.TestInstanceCount == 0 {
 		ps.TerminateService()
 	}
 
@@ -160,7 +159,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	if ri.RunInfo.RunEnv.RunParams.TestGroupID != "sub-group-6" {
+	if ri.RunInfo.RunEnv.RunParams.TestGroupID != "sub-group-6" && ri.RunInfo.RunEnv.RunParams.TestInstanceCount != 0 {
 
 		events := ps.ReturnEventStats()
 		subs := ps.ReturnSubStats()

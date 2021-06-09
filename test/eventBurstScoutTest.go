@@ -49,22 +49,37 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "BU"
-	var expectedE int
+	variant := "RR"
+	var expectedE []string
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
 	case "sub-group-1":
-		expectedE = 2 + 5
+		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
+			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 11 times cooler than flying-cars!", "I already surfed 10 portuguese beaches!",
+			"I already surfed 11 portuguese beaches!")
 	case "sub-group-2":
-		expectedE = 2 + 5
+		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
+			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 11 times cooler than flying-cars!", "Portugal will score 10 goals at the world cup!",
+			"Portugal will score 11 goals at the world cup!")
 	case "sub-group-3":
-		expectedE = 3
+		expectedE = append(expectedE, "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
+			"Surf trip to bali for 1102, just today!")
 	case "sub-group-4":
-		expectedE = 3 + 5
+		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
+			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 11 times cooler than flying-cars!", "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
+			"Surf trip to bali for 1102, just today!")
 	case "sub-group-5":
-		expectedE = 6
+		expectedE = append(expectedE, "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
+			"Surf trip to bali for 1102, just today!", "Surf trip to hawai for 1600, just today!", "Surf trip to hawai for 1601, just today!",
+			"Surf trip to hawai for 1602, just today!")
 	case "sub-group-6":
-		expectedE = 5 + 3
+		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
+			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 11 times cooler than flying-cars!", "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
+			"Surf trip to bali for 1102, just today!")
 	}
 
 	ri.Client.MustSignalEntry(ctx, readyState)
@@ -120,24 +135,24 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
 	case "sub-group-1":
-		event6 := fmt.Sprintf("Surf trip to bali for 10%d, just today!", ri.Node.info.Seq%100)
-		pred6 := fmt.Sprintf("surf T/bali T/trip T/price R 10%d 10%d", ri.Node.info.Seq%100, ri.Node.info.Seq%100)
+		event6 := fmt.Sprintf("Surf trip to bali for 110%d, just today!", ri.Node.info.GroupSeq)
+		pred6 := fmt.Sprintf("surf T/bali T/trip T/price R 110%d 110%d", ri.Node.info.GroupSeq, ri.Node.info.GroupSeq)
 		ps.MyPublish(event6, pred6)
 	case "sub-group-2":
-		event5 := fmt.Sprintf("Surf trip to hawai for 15%d, just today!", ri.Node.info.Seq%100)
-		pred5 := fmt.Sprintf("surf T/hawai T/trip T/price R 15%d 15%d", ri.Node.info.Seq%100, ri.Node.info.Seq%100)
+		event5 := fmt.Sprintf("Surf trip to hawai for 160%d, just today!", ri.Node.info.GroupSeq)
+		pred5 := fmt.Sprintf("surf T/hawai T/trip T/price R 160%d 160%d", ri.Node.info.GroupSeq, ri.Node.info.GroupSeq)
 		ps.MyPublish(event5, pred5)
 	case "sub-group-3":
-		event3 := fmt.Sprintf("Using IPFS, is %d times cooler than flip-flops!", ri.Node.info.Seq%100)
+		event3 := fmt.Sprintf("Using IPFS, is 1%d times cooler than flip-flops!", ri.Node.info.GroupSeq)
 		ps.MyPublish(event3, "ipfs T")
 	case "sub-group-4":
-		event4 := fmt.Sprintf("Portugal will score 1%d goals at the world cup!", ri.Node.info.Seq%100)
+		event4 := fmt.Sprintf("Portugal will score 1%d goals at the world cup!", ri.Node.info.GroupSeq)
 		ps.MyPublish(event4, "portugal T/soccer T")
 	case "sub-group-5":
-		event2 := fmt.Sprintf("Using IPFS, is %d times cooler than flying-cars!", ri.Node.info.Seq%100)
+		event2 := fmt.Sprintf("Using IPFS, is 1%d times cooler than flying-cars!", ri.Node.info.GroupSeq)
 		ps.MyPublish(event2, "ipfs T")
 	case "sub-group-6":
-		event1 := fmt.Sprintf("I already surfed %d portuguese beaches!", ri.Node.info.Seq%100)
+		event1 := fmt.Sprintf("I already surfed 1%d portuguese beaches!", ri.Node.info.GroupSeq)
 		ps.MyPublish(event1, "portugal T/surf T")
 	}
 
@@ -159,25 +174,19 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	events := ps.ReturnEventStats()
 	subs := ps.ReturnSubStats()
-	nEScout := len(events)
+	missed, duplicated := ps.ReturnCorrectnessStats(expectedE)
 	runenv.R().RecordPoint("# Peers - ScoutSubs eventBurst"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
 	runenv.R().RecordPoint("CPU used - ScoutSubs eventBurst"+variant, finalCpu[0].User-initCpu[0].User)
 	runenv.R().RecordPoint("Memory used - ScoutSubs eventBurst"+variant, float64(finalMem.Used-initMem.Used)/(1024*1024))
+	runenv.R().RecordPoint("# Events Missing - ScoutSubs eventBurst"+variant, float64(missed))
+	runenv.R().RecordPoint("# Events Duplicated - ScoutSubs eventBurst"+variant, float64(duplicated))
 
 	for _, ev := range events {
 		runenv.R().RecordPoint("Event Latency - ScoutSubs eventBurst"+variant, float64(ev))
 	}
 	for _, sb := range subs {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs eventBurst"+variant, float64(sb))
-	}
-
-	if expectedE > nEScout {
-		runenv.R().RecordPoint("# Events Missing - ScoutSubs eventBurst"+variant, float64(expectedE-nEScout))
-		runenv.R().RecordPoint("# Events Duplicated - ScoutSubs eventBurst"+variant, float64(0))
-	} else {
-		runenv.R().RecordPoint("# Events Missing - ScoutSubs eventBurst"+variant, float64(0))
-		runenv.R().RecordPoint("# Events Duplicated - ScoutSubs eventBurst"+variant, float64(nEScout-expectedE))
 	}
 
 	ri.Client.MustSignalEntry(ctx, recordedState)

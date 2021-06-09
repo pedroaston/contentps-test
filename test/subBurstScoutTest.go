@@ -48,7 +48,7 @@ func TestSubBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "BU"
+	variant := "RR"
 	var expectedE []string
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {

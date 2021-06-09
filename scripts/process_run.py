@@ -73,7 +73,6 @@ def digested_results(res, test):
         elif item["name"] in testCumMetrics:
             final_data[item["name"]] += item["value"]
 
-
     for sums in summary:
         if num_metrics[sums] != 0:
             final_data[sums + "/mean"] = summary[sums]/num_metrics[sums]
@@ -94,22 +93,44 @@ def metric_summary(type):
 ###########################
 ## Event Latency boxplot ##
 ###########################
-def boxplot_latency(scenario):
+def boxplot_event_latency(scenario):
     fast_res = metric_summary("FastDelivery")
     scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
     scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
     scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
     scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
 
-    data = [fast_res['Event Latency - FastDelivery/all'], scout_res_BU['Event Latency - ScoutSubs normalBU/all'], 
-     scout_res_BR['Event Latency - ScoutSubs normalBR/all'], scout_res_RU['Event Latency - ScoutSubs normalRU/all'],
-     scout_res_RR['Event Latency - ScoutSubs normalRR/all']]
+    data = [fast_res['Event Latency - FastDelivery/all'], scout_res_BU['Event Latency - ScoutSubs '+scenario+'BU/all'], 
+     scout_res_BR['Event Latency - ScoutSubs '+scenario+'BR/all'], scout_res_RU['Event Latency - ScoutSubs '+scenario+'RU/all'],
+     scout_res_RR['Event Latency - ScoutSubs '+scenario+'RR/all']]
 
     labels = ['FastDelivery', 'Basic-Unreliable', 'Basic-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
 
     sns.set_context('talk', font_scale = 0.75)
     fig7, ax7 = plt.subplots(figsize=(10, 8))
-    ax7.set_title('Event Latency Results', pad=30, fontsize=20)
+    ax7.set_title('Event Latency Distribution', pad=30, fontsize=20)
+    ax7.boxplot(data, labels=labels, patch_artist=True)
+    ax7.set_xlabel('Variants', labelpad=20)
+    ax7.set_ylabel('Time (ms)', labelpad=20)
+
+    plt.show()
+
+#########################
+## Sub Latency boxplot ##
+#########################
+def boxplot_sub_latency(scenario):
+    fast_res = metric_summary("FastDelivery")
+    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
+    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+
+    data = [fast_res['Sub Latency - FastDelivery/all'], scout_res_BR['Sub Latency - ScoutSubs '+scenario+'BR/all'],
+     scout_res_RR['Sub Latency - ScoutSubs '+scenario+'RR/all']]
+
+    labels = ['FastDelivery', 'Basic-Reliable', 'Redirect-Reliable']
+
+    sns.set_context('talk', font_scale = 0.75)
+    fig7, ax7 = plt.subplots(figsize=(10, 8))
+    ax7.set_title('Sub Latency Distribution', pad=30, fontsize=20)
     ax7.boxplot(data, labels=labels, patch_artist=True)
     ax7.set_xlabel('Variants', labelpad=20)
     ax7.set_ylabel('Time (ms)', labelpad=20)
