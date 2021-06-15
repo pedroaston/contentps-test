@@ -48,7 +48,7 @@ func TestNormalScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "RR"
+	variant := "BU"
 	var expectedE []string
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {

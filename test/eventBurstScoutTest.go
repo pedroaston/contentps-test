@@ -55,31 +55,41 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
 	case "sub-group-1":
 		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
-			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
-			"Using IPFS, is 11 times cooler than flying-cars!", "I already surfed 10 portuguese beaches!",
-			"I already surfed 11 portuguese beaches!")
+			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
+			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
+			"Using IPFS, is 13 times cooler than flying-cars!", "I already surfed 10 portuguese beaches!", "I already surfed 11 portuguese beaches!",
+			"I already surfed 12 portuguese beaches!", "I already surfed 13 portuguese beaches!")
 	case "sub-group-2":
 		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
-			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
-			"Using IPFS, is 11 times cooler than flying-cars!", "Portugal will score 10 goals at the world cup!",
-			"Portugal will score 11 goals at the world cup!")
+			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
+			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
+			"Using IPFS, is 13 times cooler than flying-cars!", "Portugal will score 10 goals at the world cup!",
+			"Portugal will score 11 goals at the world cup!", "Portugal will score 12 goals at the world cup!",
+			"Portugal will score 13 goals at the world cup!")
 	case "sub-group-3":
 		expectedE = append(expectedE, "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!")
+			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!")
 	case "sub-group-4":
 		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
-			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
-			"Using IPFS, is 11 times cooler than flying-cars!", "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
+			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
+			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
+			"Using IPFS, is 13 times cooler than flying-cars!", "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
 			"Surf trip to bali for 1102, just today!")
 	case "sub-group-5":
 		expectedE = append(expectedE, "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!", "Surf trip to hawai for 1600, just today!", "Surf trip to hawai for 1601, just today!",
-			"Surf trip to hawai for 1602, just today!")
+			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!",
+			"Surf trip to hawai for 1600, just today!", "Surf trip to hawai for 1601, just today!", "Surf trip to hawai for 1602, just today!",
+			"Surf trip to hawai for 1603, just today!", "Surf trip to hawai for 1604, just today!")
 	case "sub-group-6":
 		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
-			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
-			"Using IPFS, is 11 times cooler than flying-cars!", "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!")
+			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
+			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
+			"Using IPFS, is 13 times cooler than flying-cars!", "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
+			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!")
 	}
 
 	ri.Client.MustSignalEntry(ctx, readyState)

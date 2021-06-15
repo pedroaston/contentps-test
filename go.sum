@@ -532,8 +532,8 @@ github.com/opentracing/opentracing-go v1.0.2/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFSt
 github.com/opentracing/opentracing-go v1.1.0/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
 github.com/opentracing/opentracing-go v1.2.0 h1:uEJPy/1a5RIPAJ0Ov+OIO8OxWu77jEv+1B0VhjKrZUs=
 github.com/opentracing/opentracing-go v1.2.0/go.mod h1:GxEUsuufX4nBwe+T+Wl9TAgYrxe9dPLANfrWvHYVTgc=
-github.com/pedroaston/contentpubsub v0.5.4 h1:fqBsaIeBkb3YYODrP8XyRFm1Vm7CA8iSzm0mU5jxgcU=
-github.com/pedroaston/contentpubsub v0.5.4/go.mod h1:8t5yKGkv8epNKtjw0lUQ0ned0R3evm7JjcIzAlmD/Ck=
+github.com/pedroaston/contentpubsub v0.5.11 h1:n+IY0Js7brbg3nLtKhX++qAWEFLsPuEDGr72dhp+yZc=
+github.com/pedroaston/contentpubsub v0.5.11/go.mod h1:8t5yKGkv8epNKtjw0lUQ0ned0R3evm7JjcIzAlmD/Ck=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

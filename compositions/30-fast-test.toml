@@ -5,14 +5,14 @@
 [global]
   plan = "contentps-test"
   case = "fast-test"
-  total_instances = 100
+  total_instances = 30
   builder = "docker:go"
   runner = "local:docker"
 
 [[groups]]
   id = "sub-group-1"
   [groups.instances]
-    count = 15
+    count = 5
     percentage = 0.0
 
   [groups.run]
@@ -22,13 +22,12 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "1"
-      bandwidth = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-2"
   [groups.instances]
-    count = 15
+    count = 5
     percentage = 0.0
 
   [groups.run]
@@ -38,14 +37,13 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "4"
-      bandwidth = "1"
       record_count = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-3"
   [groups.instances]
-    count = 15
+    count = 5
     percentage = 0.0
 
   [groups.run]
@@ -55,14 +53,13 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "3"
-      bandwidth = "1"
       record_count = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-4"
   [groups.instances]
-    count = 15
+    count = 4
     percentage = 0.0
 
   [groups.run]
@@ -72,14 +69,13 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "2"
-      bandwidth = "1"
       record_count = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-5"
   [groups.instances]
-    count = 15
+    count = 4
     percentage = 0.0
 
   [groups.run]
@@ -89,15 +85,13 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "5"
-      bandwidth = "1"
-      n_find_peers = "5"
       search_records = "true"
       timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-6"
   [groups.instances]
-    count = 15
+    count = 4
     percentage = 0.0
 
   [groups.run]
@@ -108,13 +102,12 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "0"
-      bandwidth = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "pub-1"
   [groups.instances]
-    count = 5
+    count = 1
     percentage = 0.0
 
   [groups.run]
@@ -125,13 +118,12 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "6"
-      bandwidth = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "pub-2"
   [groups.instances]
-    count = 5
+    count = 1
     percentage = 0.0
 
   [groups.run]
@@ -142,13 +134,12 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "7"
-      bandwidth = "1"
       timeout_secs = "600"
 
 [[groups]]
   id = "pub-3"
   [groups.instances]
-    count = 5
+    count = 1
     percentage = 0.0
 
   [groups.run]
@@ -159,22 +150,4 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "8"
-      bandwidth = "1"
-      timeout_secs = "600"
-
-[[groups]]
-  id = "pub-4"
-  [groups.instances]
-    count = 5
-    percentage = 0.0
-
-  [groups.run]
-    [groups.run.test_params]
-      alpha = "6"
-      beta = "3"
-      bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
-      group_order = "8"
-      bandwidth = "1"
       timeout_secs = "600"

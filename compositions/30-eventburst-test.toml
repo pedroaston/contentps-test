@@ -5,14 +5,14 @@
 [global]
   plan = "contentps-test"
   case = "eventburst-scout-test"
-  total_instances = 18
+  total_instances = 30
   builder = "docker:go"
   runner = "local:docker"
 
 [[groups]]
   id = "sub-group-1"
   [groups.instances]
-    count = 3
+    count = 5
     percentage = 0.0
 
   [groups.run]
@@ -27,7 +27,7 @@
 [[groups]]
   id = "sub-group-2"
   [groups.instances]
-    count = 3
+    count = 5
     percentage = 0.0
 
   [groups.run]
@@ -43,7 +43,7 @@
 [[groups]]
   id = "sub-group-3"
   [groups.instances]
-    count = 3
+    count = 5
     percentage = 0.0
 
   [groups.run]
@@ -59,7 +59,7 @@
 [[groups]]
   id = "sub-group-4"
   [groups.instances]
-    count = 2
+    count = 4
     percentage = 0.0
 
   [groups.run]
@@ -75,7 +75,7 @@
 [[groups]]
   id = "sub-group-5"
   [groups.instances]
-    count = 2
+    count = 4
     percentage = 0.0
 
   [groups.run]
@@ -91,7 +91,7 @@
 [[groups]]
   id = "sub-group-6"
   [groups.instances]
-    count = 2
+    count = 4
     percentage = 0.0
 
   [groups.run]

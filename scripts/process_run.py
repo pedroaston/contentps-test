@@ -90,19 +90,31 @@ def metric_summary(type):
     final_res = digested_results(agg, type)
     return final_res
 
+##############################################
+## Shows all plots of a particular scenario ##
+##############################################
+def plot_everything(scenario):
+    fast = metric_summary("FastDelivery")
+    scout_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
+    scout_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
+    scout_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
+    scout_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+
+    plot_correctness_metrics(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario)
+    plot_latency_metric(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario)
+    boxplot_event_latency(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario)
+    boxplot_sub_latency(fast, scout_BR, scout_RR, scenario)
+    plot_memory_metric(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario)
+    plot_cpu_metric(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario)
+
 ###########################
 ## Event Latency boxplot ##
 ###########################
-def boxplot_event_latency(scenario):
-    fast_res = metric_summary("FastDelivery")
-    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
-    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
-    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
-    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+def boxplot_event_latency(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario):
 
-    data = [fast_res['Event Latency - FastDelivery/all'], scout_res_BU['Event Latency - ScoutSubs '+scenario+'BU/all'], 
-     scout_res_BR['Event Latency - ScoutSubs '+scenario+'BR/all'], scout_res_RU['Event Latency - ScoutSubs '+scenario+'RU/all'],
-     scout_res_RR['Event Latency - ScoutSubs '+scenario+'RR/all']]
+    data = [fast['Event Latency - FastDelivery/all'], scout_BU['Event Latency - ScoutSubs '+scenario+'BU/all'], 
+     scout_BR['Event Latency - ScoutSubs '+scenario+'BR/all'], scout_RU['Event Latency - ScoutSubs '+scenario+'RU/all'],
+     scout_RR['Event Latency - ScoutSubs '+scenario+'RR/all']]
 
     labels = ['FastDelivery', 'Basic-Unreliable', 'Basic-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
 
@@ -118,13 +130,10 @@ def boxplot_event_latency(scenario):
 #########################
 ## Sub Latency boxplot ##
 #########################
-def boxplot_sub_latency(scenario):
-    fast_res = metric_summary("FastDelivery")
-    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
-    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+def boxplot_sub_latency(fast, scout_BR, scout_RR, scenario):
 
-    data = [fast_res['Sub Latency - FastDelivery/all'], scout_res_BR['Sub Latency - ScoutSubs '+scenario+'BR/all'],
-     scout_res_RR['Sub Latency - ScoutSubs '+scenario+'RR/all']]
+    data = [fast['Sub Latency - FastDelivery/all'], scout_BR['Sub Latency - ScoutSubs '+scenario+'BR/all'],
+     scout_RR['Sub Latency - ScoutSubs '+scenario+'RR/all']]
 
     labels = ['FastDelivery', 'Basic-Reliable', 'Redirect-Reliable']
 
@@ -140,33 +149,27 @@ def boxplot_sub_latency(scenario):
 #########################
 ## Memory metrics plot ##
 #########################
-def plot_memory_metric(scenario):
-    fast_res = metric_summary("FastDelivery")
-    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
-    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
-    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
-    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+def plot_memory_metric(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario):
 
     labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
-    mean_values = [fast_res['Memory used - FastDelivery/mean'], scout_res_BU['Memory used - ScoutSubs '+scenario+'BU/mean'],
-     scout_res_BR['Memory used - ScoutSubs '+scenario+'BR/mean'], scout_res_RU['Memory used - ScoutSubs '+scenario+'RU/mean'],
-     scout_res_RR['Memory used - ScoutSubs '+scenario+'RR/mean']]
-    max_values = [fast_res['Memory used - FastDelivery/max'],scout_res_BU['Memory used - ScoutSubs '+scenario+'BU/max'],
-     scout_res_BR['Memory used - ScoutSubs '+scenario+'BR/max'], scout_res_RU['Memory used - ScoutSubs '+scenario+'RU/max'],
-     scout_res_RR['Memory used - ScoutSubs '+scenario+'RR/max']]
+    mean_values = [fast['Memory used - FastDelivery/mean'], scout_BU['Memory used - ScoutSubs '+scenario+'BU/mean'],
+     scout_BR['Memory used - ScoutSubs '+scenario+'BR/mean'], scout_RU['Memory used - ScoutSubs '+scenario+'RU/mean'],
+     scout_RR['Memory used - ScoutSubs '+scenario+'RR/mean']]
+    max_values = [fast['Memory used - FastDelivery/max'],scout_BU['Memory used - ScoutSubs '+scenario+'BU/max'],
+     scout_BR['Memory used - ScoutSubs '+scenario+'BR/max'], scout_RU['Memory used - ScoutSubs '+scenario+'RU/max'],
+     scout_RR['Memory used - ScoutSubs '+scenario+'RR/max']]
 
 
     sns.set_context('talk', font_scale = 0.75)
     fig, ax = plt.subplots(figsize=(12, 8))
 
-    x = np.arange(len(labels))  # the label locations
-    width = 0.4  # the width of the bars
+    x = np.arange(len(labels))  
+    width = 0.4  
 
     
     ax.bar(x - width/2, mean_values, width, label='mean')
     ax.bar(x + width/2, max_values, width, label='max')
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
@@ -185,21 +188,12 @@ def plot_memory_metric(scenario):
     ax.set_title('Memory used by pubsub', pad=30, fontsize=20)
 
     for bar in ax.patches:
-        # The text annotation for each bar should be its height.
         bar_value = bar.get_height()
-        # Format the text with commas to separate thousands. You can do
-        # any type of formatting here though.
         text = f'{bar_value:.1f}'
-        # This will give the middle of each bar on the x-axis.
         text_x = bar.get_x() + bar.get_width() / 2
-        # get_y() is where the bar starts so we add the height to it.
         text_y = bar.get_y() + bar_value
-        # If we want the text to be the same color as the bar, we can
-        # get the color like so:
         bar_color = bar.get_facecolor()
-        # If you want a consistent color, you can just set it as a constant, e.g. #222222
-        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color,
-                size=12)
+        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color, size=12)
 
     fig.tight_layout()
     plt.show()
@@ -208,30 +202,24 @@ def plot_memory_metric(scenario):
 ######################
 ## Cpu metrics plot ##
 ######################
-def plot_cpu_metric(scenario):
-    fast_res = metric_summary("FastDelivery")
-    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
-    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
-    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
-    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+def plot_cpu_metric(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario):
 
     labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
-    mean_values = [fast_res['CPU used - FastDelivery/mean'], scout_res_BU['CPU used - ScoutSubs '+scenario+'BU/mean'],
-     scout_res_BR['CPU used - ScoutSubs '+scenario+'BR/mean'], scout_res_RU['CPU used - ScoutSubs '+scenario+'RU/mean'],
-     scout_res_RR['CPU used - ScoutSubs '+scenario+'RR/mean']]
-    max_values = [fast_res['CPU used - FastDelivery/max'],scout_res_BU['CPU used - ScoutSubs '+scenario+'BU/max'],
-     scout_res_BR['CPU used - ScoutSubs '+scenario+'BR/max'], scout_res_RU['CPU used - ScoutSubs '+scenario+'RU/max'],
-     scout_res_RR['CPU used - ScoutSubs '+scenario+'RR/max']]
+    mean_values = [fast['CPU used - FastDelivery/mean'], scout_BU['CPU used - ScoutSubs '+scenario+'BU/mean'],
+     scout_BR['CPU used - ScoutSubs '+scenario+'BR/mean'], scout_RU['CPU used - ScoutSubs '+scenario+'RU/mean'],
+     scout_RR['CPU used - ScoutSubs '+scenario+'RR/mean']]
+    max_values = [fast['CPU used - FastDelivery/max'],scout_BU['CPU used - ScoutSubs '+scenario+'BU/max'],
+     scout_BR['CPU used - ScoutSubs '+scenario+'BR/max'], scout_RU['CPU used - ScoutSubs '+scenario+'RU/max'],
+     scout_RR['CPU used - ScoutSubs '+scenario+'RR/max']]
 
     sns.set_context('talk', font_scale = 0.75)
     fig, ax = plt.subplots(figsize=(12, 8))
-    x = np.arange(len(labels))  # the label locations
-    width = 0.4  # the width of the bars
+    x = np.arange(len(labels))  
+    width = 0.4  
 
     ax.bar(x - width/2, mean_values, width, label='mean')
     ax.bar(x + width/2, max_values, width, label='max')
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
@@ -250,21 +238,12 @@ def plot_cpu_metric(scenario):
     ax.set_title('CPU time used by pubsub', pad=30, fontsize=20)
 
     for bar in ax.patches:
-        # The text annotation for each bar should be its height.
         bar_value = bar.get_height()
-        # Format the text with commas to separate thousands. You can do
-        # any type of formatting here though.
         text = f'{bar_value:.2f}'
-        # This will give the middle of each bar on the x-axis.
         text_x = bar.get_x() + bar.get_width() / 2
-        # get_y() is where the bar starts so we add the height to it.
         text_y = bar.get_y() + bar_value
-        # If we want the text to be the same color as the bar, we can
-        # get the color like so:
         bar_color = bar.get_facecolor()
-        # If you want a consistent color, you can just set it as a constant, e.g. #222222
-        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color,
-                size=12)
+        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color, size=12)
 
     fig.tight_layout()
     plt.show()
@@ -273,30 +252,24 @@ def plot_cpu_metric(scenario):
 ####################################
 ## Avg event latency metrics plot ##
 ####################################
-def plot_latency_metric(scenario):
-    fast_res = metric_summary("FastDelivery")
-    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
-    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
-    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
-    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+def plot_latency_metric(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario):
 
     labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
-    mean_values = [fast_res['Event Latency - FastDelivery/mean'], scout_res_BU['Event Latency - ScoutSubs '+scenario+'BU/mean'],
-     scout_res_BR['Event Latency - ScoutSubs '+scenario+'BR/mean'], scout_res_RU['Event Latency - ScoutSubs '+scenario+'RU/mean'],
-     scout_res_RR['Event Latency - ScoutSubs '+scenario+'RR/mean']]
-    max_values = [fast_res['Event Latency - FastDelivery/max'],scout_res_BU['Event Latency - ScoutSubs '+scenario+'BU/max'],
-     scout_res_BR['Event Latency - ScoutSubs '+scenario+'BR/max'], scout_res_RU['Event Latency - ScoutSubs '+scenario+'RU/max'],
-     scout_res_RR['Event Latency - ScoutSubs '+scenario+'RR/max']]
+    mean_values = [fast['Event Latency - FastDelivery/mean'], scout_BU['Event Latency - ScoutSubs '+scenario+'BU/mean'],
+     scout_BR['Event Latency - ScoutSubs '+scenario+'BR/mean'], scout_RU['Event Latency - ScoutSubs '+scenario+'RU/mean'],
+     scout_RR['Event Latency - ScoutSubs '+scenario+'RR/mean']]
+    max_values = [fast['Event Latency - FastDelivery/max'],scout_BU['Event Latency - ScoutSubs '+scenario+'BU/max'],
+     scout_BR['Event Latency - ScoutSubs '+scenario+'BR/max'], scout_RU['Event Latency - ScoutSubs '+scenario+'RU/max'],
+     scout_RR['Event Latency - ScoutSubs '+scenario+'RR/max']]
 
     sns.set_context('talk', font_scale = 0.75)
     fig, ax = plt.subplots(figsize=(12, 8))
-    x = np.arange(len(labels))  # the label locations
-    width = 0.4  # the width of the bars
+    x = np.arange(len(labels))
+    width = 0.4
 
     ax.bar(x - width/2, mean_values, width, label='mean')
     ax.bar(x + width/2, max_values, width, label='max')
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
@@ -315,21 +288,12 @@ def plot_latency_metric(scenario):
     ax.set_title('Event latency with pubsub', pad=30, fontsize=20)
 
     for bar in ax.patches:
-        # The text annotation for each bar should be its height.
         bar_value = bar.get_height()
-        # Format the text with commas to separate thousands. You can do
-        # any type of formatting here though.
         text = f'{bar_value:.0f}'
-        # This will give the middle of each bar on the x-axis.
         text_x = bar.get_x() + bar.get_width() / 2
-        # get_y() is where the bar starts so we add the height to it.
         text_y = bar.get_y() + bar_value
-        # If we want the text to be the same color as the bar, we can
-        # get the color like so:
         bar_color = bar.get_facecolor()
-        # If you want a consistent color, you can just set it as a constant, e.g. #222222
-        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color,
-                size=12)
+        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color, size=12)
 
     fig.tight_layout()
     plt.show()
@@ -337,30 +301,24 @@ def plot_latency_metric(scenario):
 ##############################
 ## Correctness metrics plot ##
 ##############################
-def plot_correctness_metrics(scenario):
-    fast_res = metric_summary("FastDelivery")
-    scout_res_BU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BU"))
-    scout_res_BR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"BR"))
-    scout_res_RU = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RU"))
-    scout_res_RR = metric_summary("{0} {1}{2}".format("ScoutSubs", scenario,"RR"))
+def plot_correctness_metrics(fast, scout_BU, scout_BR, scout_RU, scout_RR, scenario):
 
     labels = ['FastDelivery', 'Base-Unreliable', 'Base-Reliable', 'Redirect-Unreliable', 'Redirect-Reliable']
-    mean_values = [fast_res['# Events Missing - FastDelivery'], scout_res_BU['# Events Missing - ScoutSubs '+scenario+'BU'],
-     scout_res_BR['# Events Missing - ScoutSubs '+scenario+'BR'], scout_res_RU['# Events Missing - ScoutSubs '+scenario+'RU'],
-     scout_res_RR['# Events Missing - ScoutSubs '+scenario+'RR']]
-    max_values = [fast_res['# Events Duplicated - FastDelivery'],scout_res_BU['# Events Duplicated - ScoutSubs '+scenario+'BU'],
-     scout_res_BR['# Events Duplicated - ScoutSubs '+scenario+'BR'], scout_res_RU['# Events Duplicated - ScoutSubs '+scenario+'RU'],
-     scout_res_RR['# Events Duplicated - ScoutSubs '+scenario+'RR']]
+    mean_values = [fast['# Events Missing - FastDelivery'], scout_BU['# Events Missing - ScoutSubs '+scenario+'BU'],
+     scout_BR['# Events Missing - ScoutSubs '+scenario+'BR'], scout_RU['# Events Missing - ScoutSubs '+scenario+'RU'],
+     scout_RR['# Events Missing - ScoutSubs '+scenario+'RR']]
+    max_values = [fast['# Events Duplicated - FastDelivery'],scout_BU['# Events Duplicated - ScoutSubs '+scenario+'BU'],
+     scout_BR['# Events Duplicated - ScoutSubs '+scenario+'BR'], scout_RU['# Events Duplicated - ScoutSubs '+scenario+'RU'],
+     scout_RR['# Events Duplicated - ScoutSubs '+scenario+'RR']]
 
     sns.set_context('talk', font_scale = 0.75)
     fig, ax = plt.subplots(figsize=(12, 8))
-    x = np.arange(len(labels))  # the label locations
-    width = 0.4  # the width of the bars
+    x = np.arange(len(labels))
+    width = 0.4
 
     ax.bar(x - width/2, mean_values, width, label='missing')
     ax.bar(x + width/2, max_values, width, label='duplicated')
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
@@ -379,21 +337,12 @@ def plot_correctness_metrics(scenario):
     ax.set_title('Pubsub Correctness', pad=30, fontsize=20)
 
     for bar in ax.patches:
-        # The text annotation for each bar should be its height.
         bar_value = bar.get_height()
-        # Format the text with commas to separate thousands. You can do
-        # any type of formatting here though.
         text = f'{bar_value:.0f}'
-        # This will give the middle of each bar on the x-axis.
         text_x = bar.get_x() + bar.get_width() / 2
-        # get_y() is where the bar starts so we add the height to it.
         text_y = bar.get_y() + bar_value
-        # If we want the text to be the same color as the bar, we can
-        # get the color like so:
         bar_color = bar.get_facecolor()
-        # If you want a consistent color, you can just set it as a constant, e.g. #222222
-        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color,
-                size=12)
+        ax.text(text_x, text_y, text, ha='center', va='bottom', color=bar_color, size=12)
 
     fig.tight_layout()
     plt.show()
