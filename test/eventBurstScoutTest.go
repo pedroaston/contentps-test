@@ -108,6 +108,7 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT", 10))
+	ps.SetHasOldPeer()
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
@@ -166,7 +167,7 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish(event1, "portugal T/surf T")
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(3 * time.Second)
 	ri.Client.MustSignalEntry(ctx, finishedState)
 	err3rdStop := <-ri.Client.MustBarrier(ctx, finishedState, runenv.TestInstanceCount).C
 	if err3rdStop != nil {

@@ -11,10 +11,6 @@ build_base_image = "golang:1.16-buster"
 module_path = "github.com/libp2p/test-plans/dht"
 exec_pkg = "."
 
-[builders."docker:go".dockerfile_extensions]
-pre_mod_download = "RUN go env -w GOPRIVATE=github.com/pedroaston\n RUN git config --global url.\"https://pedroaston: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@github.com\".insteadOf \"https://github.com\""
-
-# TODO: exec:go is not ready yet
 [builders."exec:go"]
 enabled = true
 module_path = "github.com/libp2p/test-plans/dht"

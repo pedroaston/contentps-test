@@ -49,7 +49,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	variant := "BU"
+	variant := "RR"
 	var expectedE []string
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -83,6 +83,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT", 10))
+	ps.SetHasOldPeer()
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
@@ -120,7 +121,8 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	// Crash Routine
-	if ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-6" && ri.RunInfo.RunEnv.RunParams.TestInstanceCount == 0 {
+	if ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-6" &&
+		(ri.RunInfo.RunEnv.RunParams.TestInstanceCount == 0 || ri.RunInfo.RunEnv.RunParams.TestInstanceCount == 1) {
 		ps.TerminateService()
 	}
 
@@ -159,7 +161,8 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	if ri.RunInfo.RunEnv.RunParams.TestGroupID != "sub-group-6" && ri.RunInfo.RunEnv.RunParams.TestInstanceCount != 0 {
+	if !(ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-6" &&
+		(ri.RunInfo.RunEnv.RunParams.TestInstanceCount == 0 || ri.RunInfo.RunEnv.RunParams.TestInstanceCount == 1)) {
 
 		events := ps.ReturnEventStats()
 		subs := ps.ReturnSubStats()

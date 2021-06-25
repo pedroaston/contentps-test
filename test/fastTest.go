@@ -80,6 +80,7 @@ func TestFastDelivery(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT", 100))
+	ps.SetHasOldPeer()
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C

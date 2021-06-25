@@ -91,6 +91,7 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 	cfg := pubsub.DefaultConfig("PT", 10)
 	cfg.SubRefreshRateMin = time.Duration(1)
 	ps := pubsub.NewPubSub(ri.Node.dht, cfg)
+	ps.SetHasOldPeer()
 
 	ri.Client.MustSignalEntry(ctx, createdState)
 	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
@@ -147,8 +148,6 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 	if ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-1" {
 		ps.MyUnsubscribe("portugal T/surf T")
 		ps.MyUnsubscribe("ipfs T")
-	} else if ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-6" && ri.Node.info.GroupSeq == 0 {
-		ps.TerminateService()
 	}
 
 	time.Sleep(2*time.Minute + 10*time.Second)
