@@ -183,23 +183,21 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	if ri.RunInfo.RunEnv.RunParams.TestGroupID != "sub-group-6" && ri.RunInfo.RunEnv.RunParams.TestInstanceCount != 0 {
-		events := ps.ReturnEventStats()
-		subs := ps.ReturnSubStats()
-		missed, duplicated := ps.ReturnCorrectnessStats(expectedE)
-		runenv.R().RecordPoint("# Peers - ScoutSubs normal"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
-		runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
-		runenv.R().RecordPoint("CPU used - ScoutSubs normal"+variant, finalCpu[0].User-initCpu[0].User)
-		runenv.R().RecordPoint("Memory used - ScoutSubs normal"+variant, float64(finalMem.Used-initMem.Used)/(1024*1024))
-		runenv.R().RecordPoint("# Events Missing - ScoutSubs normal"+variant, float64(missed))
-		runenv.R().RecordPoint("# Events Duplicated - ScoutSubs normal"+variant, float64(duplicated))
+	events := ps.ReturnEventStats()
+	subs := ps.ReturnSubStats()
+	missed, duplicated := ps.ReturnCorrectnessStats(expectedE)
+	runenv.R().RecordPoint("# Peers - ScoutSubs longrun"+variant, float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
+	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
+	runenv.R().RecordPoint("CPU used - ScoutSubs longrun"+variant, finalCpu[0].User-initCpu[0].User)
+	runenv.R().RecordPoint("Memory used - ScoutSubs longrun"+variant, float64(finalMem.Used-initMem.Used)/(1024*1024))
+	runenv.R().RecordPoint("# Events Missing - ScoutSubs longrun"+variant, float64(missed))
+	runenv.R().RecordPoint("# Events Duplicated - ScoutSubs longrun"+variant, float64(duplicated))
 
-		for _, ev := range events {
-			runenv.R().RecordPoint("Event Latency - ScoutSubs normal"+variant, float64(ev))
-		}
-		for _, sb := range subs {
-			runenv.R().RecordPoint("Sub Latency - ScoutSubs normal"+variant, float64(sb))
-		}
+	for _, ev := range events {
+		runenv.R().RecordPoint("Event Latency - ScoutSubs longrun"+variant, float64(ev))
+	}
+	for _, sb := range subs {
+		runenv.R().RecordPoint("Sub Latency - ScoutSubs longrun"+variant, float64(sb))
 	}
 
 	ri.Client.MustSignalEntry(ctx, recordedState)

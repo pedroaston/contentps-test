@@ -2,11 +2,13 @@
 This repo has a test-plan to evaluate the performance of a pubsub middleware over ipfs kad-dht. This repository was adapted from [libp2p/test-plans](https://github.com/libp2p/test-plans/tree/master/dht).For all details about the project check [here](https://github.com/pedroaston/smartpubsub-ipfs).
 
 ## Run Test Environment
-Use the files at composition.
-'''go
+First you should have testground ready to go. Check [here](https://github.com/testground/testground) if you still don't have.
+Then Use the files at composition.
+
+```go
 cd composition
 testground run composition -f 30-normal-test.toml
-'''
+```
 
 ## Test Scenarios
 
