@@ -11,6 +11,7 @@ var testCases = map[string]interface{}{
 	"eventburst-scout-test": test.EventBurstScoutTest,
 	"fault-scout-test":      test.FaultScoutTest,
 	"longrun-scout-test":    test.LongRunScoutTest,
+	"complete-scout-test":   test.CompleteScoutTest,
 	"fast-test":             test.FastTest,
 }
 
