@@ -34,7 +34,7 @@ import (
 	tptu "github.com/libp2p/go-libp2p-transport-upgrader"
 	tcp "github.com/libp2p/go-tcp-transport"
 	"github.com/multiformats/go-multiaddr"
-	manet "github.com/multiformats/go-multiaddr-net"
+	mnet "github.com/multiformats/go-multiaddr/net"
 
 	tgNetwork "github.com/testground/sdk-go/network"
 
@@ -176,7 +176,7 @@ func NewDHTNode(ctx context.Context, runenv *runtime.RunEnv, opts *SetupOpts, id
 
 	if info.Properties.Undialable {
 		tcpAddr.Port = rand.Intn(1024) + 1024
-		bogusAddr, err := manet.FromNetAddr(tcpAddr)
+		bogusAddr, err := mnet.FromNetAddr(tcpAddr)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -207,7 +207,7 @@ func NewDHTNode(ctx context.Context, runenv *runtime.RunEnv, opts *SetupOpts, id
 		}()
 
 	} else {
-		addr, err := manet.FromNetAddr(tcpAddr)
+		addr, err := mnet.FromNetAddr(tcpAddr)
 		if err != nil {
 			return nil, nil, err
 		}

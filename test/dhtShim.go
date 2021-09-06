@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"sync"
+	"time"
 
 	"github.com/testground/sdk-go/runtime"
 
@@ -28,6 +29,7 @@ func createDHT(ctx context.Context, h host.Host, ds datastore.Batching, opts *Se
 		kaddht.Datastore(ds),
 		kaddht.BucketSize(opts.BucketSize),
 		kaddht.RoutingTableRefreshQueryTimeout(opts.Timeout),
+		kaddht.RoutingTableRefreshPeriod(15 * time.Minute),
 		kaddht.Concurrency(opts.Alpha),
 		kaddht.Resiliency(opts.Beta),
 		kaddht.NamespacedValidator("ipns", ipns.Validator{KeyBook: h.Peerstore()}),
@@ -122,8 +124,6 @@ func TableHealth(dht *kaddht.IpfsDHT, peers map[peer.ID]*DHTNodeInfo, ri *DHTRun
 
 	report := kademlia.TableHealth(kadPeerID(dht.PeerID()), rtPeers, knownNodes)
 	ri.RunEnv.RecordMessage("table health: %s", report.String())
-
-	return
 }
 
 func kadPeerID(p peer.ID) key.Key {

@@ -115,7 +115,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("surf T/trip T/price R 1000 1400")
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(2 * time.Second)
 	ri.Client.MustSignalEntry(ctx, NsubbedState)
 	err2ndStop := <-ri.Client.MustBarrier(ctx, NsubbedState, runenv.TestInstanceCount).C
 	if err2ndStop != nil {
@@ -131,10 +131,10 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "pub-3":
 		ps.MyPublish("Surf trip to bali for 1050, just today!", "surf T/bali T/trip T/price R 1050 1050")
 	case "pub-4":
-		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
+		ps.MyPublish("Portugal won the world cup!", "portugal T/soccer T")
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(2 * time.Second)
 	ri.Client.MustSignalEntry(ctx, NfinishedState)
 	err3rdStop := <-ri.Client.MustBarrier(ctx, NfinishedState, runenv.TestInstanceCount).C
 	if err3rdStop != nil {
@@ -174,7 +174,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	// Begining subburst
-	time.Sleep(5 * time.Second)
+	time.Sleep(time.Second)
 
 	SreadyState := sync.State("ready")
 	SfinishedState := sync.State("finished")
@@ -229,7 +229,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(3 * time.Second)
 	ri.Client.MustSignalEntry(ctx, SfinishedState)
 	Serr2ndStop := <-ri.Client.MustBarrier(ctx, SfinishedState, runenv.TestInstanceCount).C
 	if Serr2ndStop != nil {
@@ -269,7 +269,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	// Begining event burst
-	time.Sleep(5 * time.Second)
+	time.Sleep(time.Second)
 
 	EreadyState := sync.State("ready")
 	EfinishedState := sync.State("finished")
@@ -356,7 +356,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish(event1, "portugal T/surf T")
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(10 * time.Second)
 	ri.Client.MustSignalEntry(ctx, EfinishedState)
 	Eerr2ndStop := <-ri.Client.MustBarrier(ctx, EfinishedState, runenv.TestInstanceCount).C
 	if Eerr2ndStop != nil {
@@ -396,7 +396,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	// Begining Fault scenario
-	time.Sleep(5 * time.Second)
+	time.Sleep(time.Second)
 
 	FreadyState := sync.State("ready")
 	FcrashedState := sync.State("crashed")
@@ -459,7 +459,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(2 * time.Second)
 	ri.Client.MustSignalEntry(ctx, FfinishedState)
 	Ferr3rdStop := <-ri.Client.MustBarrier(ctx, FfinishedState, runenv.TestInstanceCount).C
 	if Ferr3rdStop != nil {
