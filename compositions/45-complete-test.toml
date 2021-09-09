@@ -91,7 +91,7 @@
 [[groups]]
   id = "sub-group-6"
   [groups.instances]
-    count = 7
+    count = 6
     percentage = 0.0
 
   [groups.run]
@@ -150,4 +150,20 @@
       bs_strategy = "6"
       bucket_size = "10"
       group_order = "8"
+      timeout_secs = "600"
+
+[[groups]]
+  id = "pub-4"
+  [groups.instances]
+    count = 1
+    percentage = 0.0
+
+  [groups.run]
+    [groups.run.test_params]
+      alpha = "6"
+      beta = "3"
+      bootstrapper = "true"
+      bs_strategy = "6"
+      bucket_size = "10"
+      group_order = "9"
       timeout_secs = "600"

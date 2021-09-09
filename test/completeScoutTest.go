@@ -36,7 +36,7 @@ func CompleteScoutTest(runenv *runtime.RunEnv) error {
 
 func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 
-	variant := "RR"
+	variant := "BU"
 	runenv := ri.RunEnv
 	NreadyState := sync.State("ready")
 	NcreatedState := sync.State("created")
@@ -56,7 +56,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "sub-group-1":
 		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Portugal has the world's best waves!")
 	case "sub-group-2":
-		expectedE = append(expectedE, "Publishing via ipfs is lit!")
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Portugal won the world cup!")
 	case "sub-group-3":
 		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1050, just today!")
 	case "sub-group-4":
@@ -226,7 +226,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "pub-3":
 		ps.MyPublish("Surf trip to bali for 1050, just today!", "surf T/bali T/trip T/price R 1050 1050")
 	case "pub-4":
-		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
+		ps.MyPublish("Portugal won the world cup!", "portugal T/soccer T")
 	}
 
 	time.Sleep(3 * time.Second)
@@ -281,40 +281,58 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "sub-group-1":
 		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
 			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
-			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 15 times cooler than flip-flops!",
+			"Using IPFS, is 16 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
 			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
-			"Using IPFS, is 13 times cooler than flying-cars!", "I already surfed 10 portuguese beaches!", "I already surfed 11 portuguese beaches!",
-			"I already surfed 12 portuguese beaches!", "I already surfed 13 portuguese beaches!")
+			"Using IPFS, is 13 times cooler than flying-cars!", "Using IPFS, is 14 times cooler than flying-cars!",
+			"Using IPFS, is 15 times cooler than flying-cars!", "Using IPFS, is 16 times cooler than flying-cars!",
+			"I already surfed 10 portuguese beaches!", "I already surfed 11 portuguese beaches!",
+			"I already surfed 12 portuguese beaches!", "I already surfed 13 portuguese beaches!",
+			"I already surfed 14 portuguese beaches!", "I already surfed 15 portuguese beaches!")
 	case "sub-group-2":
 		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
 			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
-			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 15 times cooler than flip-flops!",
+			"Using IPFS, is 16 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
 			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
-			"Using IPFS, is 13 times cooler than flying-cars!", "Portugal will score 10 goals at the world cup!",
+			"Using IPFS, is 13 times cooler than flying-cars!", "Using IPFS, is 14 times cooler than flying-cars!",
+			"Using IPFS, is 15 times cooler than flying-cars!", "Using IPFS, is 16 times cooler than flying-cars!",
+			"Portugal will score 10 goals at the world cup!",
 			"Portugal will score 11 goals at the world cup!", "Portugal will score 12 goals at the world cup!",
-			"Portugal will score 13 goals at the world cup!")
+			"Portugal will score 13 goals at the world cup!", "Portugal will score 14 goals at the world cup!",
+			"Portugal will score 15 goals at the world cup!", "Portugal will score 16 goals at the world cup!")
 	case "sub-group-3":
 		expectedE = append(expectedE, "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!")
+			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!",
+			"Surf trip to bali for 1105, just today!", "Surf trip to bali for 1106, just today!")
 	case "sub-group-4":
 		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
 			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
-			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 15 times cooler than flip-flops!",
+			"Using IPFS, is 16 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
 			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
-			"Using IPFS, is 13 times cooler than flying-cars!", "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
+			"Using IPFS, is 13 times cooler than flying-cars!", "Using IPFS, is 14 times cooler than flying-cars!",
+			"Using IPFS, is 15 times cooler than flying-cars!", "Using IPFS, is 16 times cooler than flying-cars!",
+			"Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
 			"Surf trip to bali for 1102, just today!")
 	case "sub-group-5":
 		expectedE = append(expectedE, "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
 			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!",
+			"Surf trip to bali for 1105, just today!", "Surf trip to bali for 1106, just today!",
 			"Surf trip to hawai for 1600, just today!", "Surf trip to hawai for 1601, just today!", "Surf trip to hawai for 1602, just today!",
-			"Surf trip to hawai for 1603, just today!", "Surf trip to hawai for 1604, just today!")
+			"Surf trip to hawai for 1603, just today!", "Surf trip to hawai for 1604, just today!", "Surf trip to hawai for 1605, just today!",
+			"Surf trip to hawai for 1606, just today!")
 	case "sub-group-6":
 		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
 			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
-			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
+			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 15 times cooler than flip-flops!",
+			"Using IPFS, is 16 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
 			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
-			"Using IPFS, is 13 times cooler than flying-cars!", "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!")
+			"Using IPFS, is 13 times cooler than flying-cars!", "Using IPFS, is 14 times cooler than flying-cars!",
+			"Using IPFS, is 15 times cooler than flying-cars!", "Using IPFS, is 16 times cooler than flying-cars!",
+			"Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
+			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!",
+			"Surf trip to bali for 1105, just today!", "Surf trip to bali for 1106, just today!")
 	}
 
 	initMem, err = mem.VirtualMemory()
@@ -409,7 +427,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "sub-group-1":
 		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Portugal has the world's best waves!")
 	case "sub-group-2":
-		expectedE = append(expectedE, "Publishing via ipfs is lit!")
+		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Portugal won the world cup!")
 	case "sub-group-3":
 		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1050, just today!")
 	case "sub-group-4":
@@ -456,10 +474,10 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "pub-3":
 		ps.MyPublish("Surf trip to bali for 1050, just today!", "surf T/bali T/trip T/price R 1050 1050")
 	case "pub-4":
-		ps.MyPublish("Publishing via ipfs is sublime!", "ipfs T")
+		ps.MyPublish("Portugal won the world cup!", "portugal T/soccer T")
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(3 * time.Second)
 	ri.Client.MustSignalEntry(ctx, FfinishedState)
 	Ferr3rdStop := <-ri.Client.MustBarrier(ctx, FfinishedState, runenv.TestInstanceCount).C
 	if Ferr3rdStop != nil {
