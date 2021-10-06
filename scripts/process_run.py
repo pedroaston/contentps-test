@@ -90,6 +90,168 @@ def metric_summary(type):
     final_res = digested_results(agg, type)
     return final_res
 
+#####################################################################
+## plots comparing replication factors and number of subs per user ##
+#####################################################################
+def final_plot():
+    # Collecting metrics
+    scout_0_1st = metric_summary("{0}{1}{2}".format("ScoutSubs", 0,"1st"))
+    scout_0_2nd = metric_summary("{0}{1}{2}".format("ScoutSubs", 0,"2nd"))
+    scout_0_3rd = metric_summary("{0}{1}{2}".format("ScoutSubs", 0,"3rd"))
+    scout_0_4th = metric_summary("{0}{1}{2}".format("ScoutSubs", 0,"4th"))
+
+    scout_1_1st = metric_summary("{0}{1}{2}".format("ScoutSubs", 1,"1st"))
+    scout_1_2nd = metric_summary("{0}{1}{2}".format("ScoutSubs", 1,"2nd"))
+    scout_1_3rd = metric_summary("{0}{1}{2}".format("ScoutSubs", 1,"3rd"))
+    scout_1_4th = metric_summary("{0}{1}{2}".format("ScoutSubs", 1,"4th"))
+
+    scout_2_1st = metric_summary("{0}{1}{2}".format("ScoutSubs", 2,"1st"))
+    scout_2_2nd = metric_summary("{0}{1}{2}".format("ScoutSubs", 2,"2nd"))
+    scout_2_3rd = metric_summary("{0}{1}{2}".format("ScoutSubs", 2,"3rd"))
+    scout_2_4th = metric_summary("{0}{1}{2}".format("ScoutSubs", 2,"4th"))
+
+    scout_3_1st = metric_summary("{0}{1}{2}".format("ScoutSubs", 3,"1st"))
+    scout_3_2nd = metric_summary("{0}{1}{2}".format("ScoutSubs", 3,"2nd"))
+    scout_3_3rd = metric_summary("{0}{1}{2}".format("ScoutSubs", 3,"3rd"))
+    scout_3_4th = metric_summary("{0}{1}{2}".format("ScoutSubs", 3,"4th"))
+
+    # Plotting event latency 
+    scout_0_event = [scout_0_1st['Event Latency - ScoutSubs01st/mean'], scout_0_2nd['Event Latency - ScoutSubs02nd/mean'],
+     scout_0_3rd['Event Latency - ScoutSubs03rd/mean'], scout_0_4th['Event Latency - ScoutSubs04th/mean']]
+
+    scout_1_event = [scout_1_1st['Event Latency - ScoutSubs11st/mean'], scout_1_2nd['Event Latency - ScoutSubs12nd/mean'],
+     scout_1_3rd['Event Latency - ScoutSubs13rd/mean'], scout_1_4th['Event Latency - ScoutSubs14th/mean']]
+     
+    scout_2_event = [scout_2_1st['Event Latency - ScoutSubs21st/mean'], scout_2_2nd['Event Latency - ScoutSubs22nd/mean'],
+     scout_2_3rd['Event Latency - ScoutSubs23rd/mean'], scout_2_4th['Event Latency - ScoutSubs24th/mean']]
+    
+    scout_3_event = [scout_3_1st['Event Latency - ScoutSubs31st/mean'], scout_3_2nd['Event Latency - ScoutSubs32nd/mean'],
+     scout_3_3rd['Event Latency - ScoutSubs33rd/mean'], scout_3_4th['Event Latency - ScoutSubs34th/mean']]
+
+    sns.set_context('talk', font_scale = 0.75)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title('Avg. Event Latency (at each stage)', pad=30, fontsize=20)
+    ax.set_xlabel('# Subscriptions per user', labelpad=20)
+    ax.set_ylabel('Time (ms)', labelpad=20)
+
+    t = [1,2,3,4]
+
+    plt.plot(t, scout_0_event, 'rs', label = 'replica-0')
+    plt.plot(t, scout_1_event, 'c^', label = 'replica-1')
+    plt.plot(t, scout_2_event, 'gs', label =  'replica-2')
+    plt.plot(t, scout_3_event, 'k^', label = 'replica-3')
+
+    ax.legend()
+    plt.xticks(np.arange(1, 5, 1.0))
+    plt.grid(True, alpha = 0.3)
+    plt.show()
+    print()
+
+    # Plotting event latency 
+    scout_0_sub = [scout_0_1st['Sub Latency - ScoutSubs01st/mean'], scout_0_2nd['Sub Latency - ScoutSubs02nd/mean'],
+     scout_0_3rd['Sub Latency - ScoutSubs03rd/mean'], scout_0_4th['Sub Latency - ScoutSubs04th/mean']]
+
+    scout_1_sub = [scout_1_1st['Sub Latency - ScoutSubs11st/mean'], scout_1_2nd['Sub Latency - ScoutSubs12nd/mean'],
+     scout_1_3rd['Sub Latency - ScoutSubs13rd/mean'], scout_1_4th['Sub Latency - ScoutSubs14th/mean']]
+     
+    scout_2_sub = [scout_2_1st['Sub Latency - ScoutSubs21st/mean'], scout_2_2nd['Sub Latency - ScoutSubs22nd/mean'],
+     scout_2_3rd['Sub Latency - ScoutSubs23rd/mean'], scout_2_4th['Sub Latency - ScoutSubs24th/mean']]
+    
+    scout_3_sub = [scout_3_1st['Sub Latency - ScoutSubs31st/mean'], scout_3_2nd['Sub Latency - ScoutSubs32nd/mean'],
+     scout_3_3rd['Sub Latency - ScoutSubs33rd/mean'], scout_3_4th['Sub Latency - ScoutSubs34th/mean']]
+
+    sns.set_context('talk', font_scale = 0.75)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title('Avg. Subscription Latency (at each stage)', pad=30, fontsize=20)
+    ax.set_xlabel('# Subscriptions per user', labelpad=20)
+    ax.set_ylabel('Time (ms)', labelpad=20)
+
+    plt.plot(t, scout_0_sub, 'rs', label = 'replica-0')
+    plt.plot(t, scout_1_sub, 'c^', label = 'replica-1')
+    plt.plot(t, scout_2_sub, 'gs', label =  'replica-2')
+    plt.plot(t, scout_3_sub, 'k^', label = 'replica-3')
+
+    ax.legend()
+    plt.xticks(np.arange(1, 5, 1.0))
+    plt.grid(True, alpha = 0.3)
+    plt.show()
+    print()
+
+    # Plotting memory usage 
+    scout_0_memory = [scout_0_1st['Memory used - ScoutSubs01st/mean'],
+     scout_0_2nd['Memory used - ScoutSubs02nd/mean']+scout_0_1st['Memory used - ScoutSubs01st/mean'],
+     scout_0_2nd['Memory used - ScoutSubs02nd/mean']+scout_0_1st['Memory used - ScoutSubs01st/mean']+scout_0_3rd['Memory used - ScoutSubs03rd/mean'],
+     scout_0_2nd['Memory used - ScoutSubs02nd/mean']+scout_0_1st['Memory used - ScoutSubs01st/mean']+scout_0_3rd['Memory used - ScoutSubs03rd/mean']+scout_0_4th['Memory used - ScoutSubs04th/mean']]
+
+    scout_1_memory = [scout_1_1st['Memory used - ScoutSubs11st/mean'],
+     scout_1_1st['Memory used - ScoutSubs11st/mean']+scout_1_2nd['Memory used - ScoutSubs12nd/mean'],
+     scout_1_1st['Memory used - ScoutSubs11st/mean']+scout_1_2nd['Memory used - ScoutSubs12nd/mean']+scout_1_3rd['Memory used - ScoutSubs13rd/mean'],
+     scout_1_1st['Memory used - ScoutSubs11st/mean']+scout_1_2nd['Memory used - ScoutSubs12nd/mean']+scout_1_3rd['Memory used - ScoutSubs13rd/mean']+scout_1_4th['Memory used - ScoutSubs14th/mean']]
+     
+    scout_2_memory = [scout_2_1st['Memory used - ScoutSubs21st/mean'],
+     scout_2_1st['Memory used - ScoutSubs21st/mean']+scout_2_2nd['Memory used - ScoutSubs22nd/mean'],
+     scout_2_1st['Memory used - ScoutSubs21st/mean']+scout_2_2nd['Memory used - ScoutSubs22nd/mean']+scout_2_3rd['Memory used - ScoutSubs23rd/mean'],
+     scout_2_1st['Memory used - ScoutSubs21st/mean']+scout_2_2nd['Memory used - ScoutSubs22nd/mean']+scout_2_3rd['Memory used - ScoutSubs23rd/mean']+scout_2_4th['Memory used - ScoutSubs24th/mean']]
+    
+    scout_3_memory = [scout_3_1st['Memory used - ScoutSubs31st/mean'],
+     scout_3_1st['Memory used - ScoutSubs31st/mean']+scout_3_2nd['Memory used - ScoutSubs32nd/mean'],
+     scout_3_1st['Memory used - ScoutSubs31st/mean']+scout_3_2nd['Memory used - ScoutSubs32nd/mean']+scout_3_3rd['Memory used - ScoutSubs33rd/mean'],
+     scout_3_1st['Memory used - ScoutSubs31st/mean']+scout_3_2nd['Memory used - ScoutSubs32nd/mean']+scout_3_3rd['Memory used - ScoutSubs33rd/mean']+scout_3_4th['Memory used - ScoutSubs34th/mean']]
+
+    sns.set_context('talk', font_scale = 0.75)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title('Avg. Memory Used (cumulatively)', pad=30, fontsize=20)
+    ax.set_xlabel('# Subscriptions per user', labelpad=20)
+    ax.set_ylabel('# Memory (MB)', labelpad=20)
+
+    plt.plot(t, scout_0_memory, 'r--', label = 'replica-0')
+    plt.plot(t, scout_1_memory, 'c', label = 'replica-1')
+    plt.plot(t, scout_2_memory, 'g--', label =  'replica-2')
+    plt.plot(t, scout_3_memory, 'k', label = 'replica-3')
+
+    ax.legend()
+    plt.xticks(np.arange(1, 5, 1.0))
+    plt.grid(True, alpha = 0.3)
+    plt.show()
+    print()
+
+    # Plotting cpu usage 
+    scout_0_cpu = [scout_0_1st['CPU used - ScoutSubs01st/mean'],
+     scout_0_1st['CPU used - ScoutSubs01st/mean']+scout_0_2nd['CPU used - ScoutSubs02nd/mean'],
+     scout_0_3rd['CPU used - ScoutSubs03rd/mean']+scout_0_1st['CPU used - ScoutSubs01st/mean']+scout_0_2nd['CPU used - ScoutSubs02nd/mean'],
+     scout_0_4th['CPU used - ScoutSubs04th/mean']+scout_0_3rd['CPU used - ScoutSubs03rd/mean']+scout_0_1st['CPU used - ScoutSubs01st/mean']+scout_0_2nd['CPU used - ScoutSubs02nd/mean']]
+
+    scout_1_cpu = [scout_1_1st['CPU used - ScoutSubs11st/mean'],
+     scout_1_2nd['CPU used - ScoutSubs12nd/mean']+scout_1_1st['CPU used - ScoutSubs11st/mean'],
+     scout_1_3rd['CPU used - ScoutSubs13rd/mean']+scout_1_2nd['CPU used - ScoutSubs12nd/mean']+scout_1_1st['CPU used - ScoutSubs11st/mean'],
+     scout_1_4th['CPU used - ScoutSubs14th/mean']+scout_1_3rd['CPU used - ScoutSubs13rd/mean']+scout_1_2nd['CPU used - ScoutSubs12nd/mean']+scout_1_1st['CPU used - ScoutSubs11st/mean']]
+     
+    scout_2_cpu = [scout_2_1st['CPU used - ScoutSubs21st/mean'], 
+     scout_2_2nd['CPU used - ScoutSubs22nd/mean']+scout_2_1st['CPU used - ScoutSubs21st/mean'],
+     scout_2_3rd['CPU used - ScoutSubs23rd/mean']+scout_2_2nd['CPU used - ScoutSubs22nd/mean']+scout_2_1st['CPU used - ScoutSubs21st/mean'],
+     scout_2_4th['CPU used - ScoutSubs24th/mean']+scout_2_3rd['CPU used - ScoutSubs23rd/mean']+scout_2_2nd['CPU used - ScoutSubs22nd/mean']+scout_2_1st['CPU used - ScoutSubs21st/mean']]
+    
+    scout_3_cpu = [scout_3_1st['CPU used - ScoutSubs31st/mean'],
+     scout_3_2nd['CPU used - ScoutSubs32nd/mean']+scout_3_1st['CPU used - ScoutSubs31st/mean'],
+     scout_3_3rd['CPU used - ScoutSubs33rd/mean']+scout_3_2nd['CPU used - ScoutSubs32nd/mean']+scout_3_1st['CPU used - ScoutSubs31st/mean'],
+     scout_3_4th['CPU used - ScoutSubs34th/mean']+scout_3_3rd['CPU used - ScoutSubs33rd/mean']+scout_3_2nd['CPU used - ScoutSubs32nd/mean']+scout_3_1st['CPU used - ScoutSubs31st/mean']]
+
+    sns.set_context('talk', font_scale = 0.75)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title('Avg. CPU User-time used (cumulatively)', pad=30, fontsize=20)
+    ax.set_xlabel('# Subscriptions per user', labelpad=20)
+    ax.set_ylabel('Time (s)', labelpad=20)
+
+    plt.plot(t, scout_0_cpu, 'r--', label = 'replica-0')
+    plt.plot(t, scout_1_cpu, 'c', label = 'replica-1')
+    plt.plot(t, scout_2_cpu, 'g--', label =  'replica-2')
+    plt.plot(t, scout_3_cpu, 'k', label = 'replica-3')
+
+    ax.legend()
+    plt.xticks(np.arange(1, 5, 1.0))
+    plt.grid(True, alpha = 0.3)
+    plt.show()
+
 ##############################################
 ## Shows all plots of a particular scenario ##
 ##############################################

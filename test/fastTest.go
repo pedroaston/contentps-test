@@ -128,7 +128,7 @@ func TestFastDelivery(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySearchAndPremiumSub("surf T/trip T/price R 1000 1400")
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(2 * time.Second)
 	ri.Client.MustSignalEntry(ctx, subbedState)
 	err3rdStop := <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
 	if err3rdStop != nil {

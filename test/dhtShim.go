@@ -60,8 +60,6 @@ func getTaggedLibp2pOpts(opts *SetupOpts, info *DHTNodeInfo) []libp2p.Option {
 	}
 }
 
-func getAllProvRecordsNum() int { return 0 }
-
 var (
 	sqonce             sync.Once
 	sqlogger, rtlogger *zap.SugaredLogger

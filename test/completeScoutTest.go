@@ -84,7 +84,9 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT", 10))
+	config := pubsub.DefaultConfig("PT", 10)
+	config.ConcurrentProcessingFactor = 250
+	ps := pubsub.NewPubSub(ri.Node.dht, config)
 	ps.SetHasOldPeer()
 
 	ri.Client.MustSignalEntry(ctx, NcreatedState)

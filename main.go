@@ -13,6 +13,7 @@ var testCases = map[string]interface{}{
 	"longrun-scout-test":    test.LongRunScoutTest,
 	"complete-scout-test":   test.CompleteScoutTest,
 	"fast-test":             test.FastTest,
+	"final-scout-test":      test.FinalScoutTest,
 }
 
 func main() {
