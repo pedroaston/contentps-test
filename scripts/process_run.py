@@ -128,7 +128,7 @@ def final_plot():
     scout_3_event = [scout_3_1st['Event Latency - ScoutSubs31st/mean'], scout_3_2nd['Event Latency - ScoutSubs32nd/mean'],
      scout_3_3rd['Event Latency - ScoutSubs33rd/mean'], scout_3_4th['Event Latency - ScoutSubs34th/mean']]
 
-    sns.set_context('talk', font_scale = 0.75)
+    sns.set_context('talk', font_scale = 1)
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.set_title('Avg. Event Latency (at each stage)', pad=30, fontsize=20)
     ax.set_xlabel('# Subscriptions per user', labelpad=20)
@@ -160,7 +160,7 @@ def final_plot():
     scout_3_sub = [scout_3_1st['Sub Latency - ScoutSubs31st/mean'], scout_3_2nd['Sub Latency - ScoutSubs32nd/mean'],
      scout_3_3rd['Sub Latency - ScoutSubs33rd/mean'], scout_3_4th['Sub Latency - ScoutSubs34th/mean']]
 
-    sns.set_context('talk', font_scale = 0.75)
+    sns.set_context('talk', font_scale = 1)
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.set_title('Avg. Subscription Latency (at each stage)', pad=30, fontsize=20)
     ax.set_xlabel('# Subscriptions per user', labelpad=20)
@@ -198,7 +198,7 @@ def final_plot():
      scout_3_1st['Memory used - ScoutSubs31st/mean']+scout_3_2nd['Memory used - ScoutSubs32nd/mean']+scout_3_3rd['Memory used - ScoutSubs33rd/mean'],
      scout_3_1st['Memory used - ScoutSubs31st/mean']+scout_3_2nd['Memory used - ScoutSubs32nd/mean']+scout_3_3rd['Memory used - ScoutSubs33rd/mean']+scout_3_4th['Memory used - ScoutSubs34th/mean']]
 
-    sns.set_context('talk', font_scale = 0.75)
+    sns.set_context('talk', font_scale = 1)
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.set_title('Avg. Memory Used (cumulatively)', pad=30, fontsize=20)
     ax.set_xlabel('# Subscriptions per user', labelpad=20)
@@ -236,7 +236,7 @@ def final_plot():
      scout_3_3rd['CPU used - ScoutSubs33rd/mean']+scout_3_2nd['CPU used - ScoutSubs32nd/mean']+scout_3_1st['CPU used - ScoutSubs31st/mean'],
      scout_3_4th['CPU used - ScoutSubs34th/mean']+scout_3_3rd['CPU used - ScoutSubs33rd/mean']+scout_3_2nd['CPU used - ScoutSubs32nd/mean']+scout_3_1st['CPU used - ScoutSubs31st/mean']]
 
-    sns.set_context('talk', font_scale = 0.75)
+    sns.set_context('talk', font_scale = 1)
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.set_title('Avg. CPU User-time used (cumulatively)', pad=30, fontsize=20)
     ax.set_xlabel('# Subscriptions per user', labelpad=20)

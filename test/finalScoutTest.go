@@ -94,6 +94,14 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("surf T/trip T/price R 1000 2000")
 	case "sub-group-6":
 		ps.MySubscribe("surf T/trip T/price R 1000 1400")
+	case "sub-group-7":
+		ps.MySubscribe("benfica T/soccer")
+	case "sub-group-8":
+		ps.MySubscribe("trip T/price R 1000 2000")
+	case "sub-group-9":
+		ps.MySubscribe("surf T")
+	case "sub-group-10":
+		ps.MySubscribe("portugal T/museum T/art T")
 	}
 
 	time.Sleep(2 * time.Second)
@@ -115,6 +123,12 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Portugal won the world cup!", "portugal T/soccer T")
 	case "pub-5":
 		ps.MyPublish("Visit or surf trip website at narlytrips.com with some travels only for 1050$", "surf T/trip T/price R 1050 1050")
+	case "pub-6":
+		ps.MyPublish("Benfica just signed Messi!", "benfica T/soccer T")
+	case "pub-7":
+		ps.MyPublish("Cruise trips for only 1570$, only tommorow", "trip T/price R 1570 1570")
+	case "pub-8":
+		ps.MyPublish("Expo of impessionist art in CCB, next week ", "portugal T/museum T/art T")
 	}
 
 	time.Sleep(3 * time.Second)
@@ -185,6 +199,14 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("temperature R 30 40")
 	case "sub-group-6":
 		ps.MySubscribe("ronaldo T/sporting T")
+	case "sub-group-7":
+		ps.MySubscribe("portugal T/temperature R 30 40")
+	case "sub-group-8":
+		ps.MySubscribe("italy T/temperature R 30 35")
+	case "sub-group-9":
+		ps.MySubscribe("laptop T/ram R 32 64/ssd 512 512/price R 1000 1500")
+	case "sub-group-10":
+		ps.MySubscribe("ronaldo T/sporting T")
 	}
 
 	time.Sleep(3 * time.Second)
@@ -206,6 +228,12 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Portugal arquipelagos have uncrowded world class waves. Come visit!", "madeira T/azores T/surf T")
 	case "pub-5":
 		ps.MyPublish("Visit or surf trip website at narlytrips.com with some travels only for 1050$", "surf T/trip T/price R 1050 1050")
+	case "pub-6":
+		ps.MyPublish("Italy in the next few weeks will have temperatures around 34ºC", "italy T/temperature R 34 34")
+	case "pub-7":
+		ps.MyPublish("Top gear laptops on 75 per cent discont", "laptop T/ram R 64 64/ssd R 512 512/price R 1100 1100")
+	case "pub-8":
+		ps.MyPublish("Ronaldo refuses sporting, for benfica is the best portuguese club", "ronaldo T/sporting T")
 	}
 
 	time.Sleep(5 * time.Second)
@@ -276,6 +304,14 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("ipfs T")
 	case "sub-group-6":
 		ps.MySubscribe("ipfs T")
+	case "sub-group-7":
+		ps.MySubscribe("ipfs T")
+	case "sub-group-8":
+		ps.MySubscribe("ipfs T")
+	case "sub-group-9":
+		ps.MySubscribe("ipfs T")
+	case "sub-group-10":
+		ps.MySubscribe("ipfs T")
 	}
 
 	time.Sleep(3 * time.Second)
@@ -296,6 +332,12 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "pub-4":
 		ps.MyPublish("Today a new version of Kademlia DHT was lanched for IPFS!", "ipfs T")
 	case "pub-5":
+		ps.MyPublish("Benfica sign ronaldo to team up with messi!", "benfica T/soccer T")
+	case "pub-6":
+		ps.MyPublish("scoutsubs is the best working pub-sub on the web", "ipfs T")
+	case "pub-7":
+		ps.MyPublish("Big riders charge madeira's sweel of the year at Jardim do mar", "surf T/madeira T")
+	case "pub-8":
 		ps.MyPublish("Visit narlytrips.com for cheap and wonderfull surf trips!", "surf T/trip T")
 	}
 
@@ -366,7 +408,15 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	case "sub-group-5":
 		ps.MySubscribe("IST T")
 	case "sub-group-6":
+		ps.MySubscribe("IST T")
+	case "sub-group-7":
 		ps.MySubscribe("FCUL T")
+	case "sub-group-8":
+		ps.MySubscribe("MIT T")
+	case "sub-group-9":
+		ps.MySubscribe("MIT T")
+	case "sub-group-10":
+		ps.MySubscribe("Caltech T")
 	}
 
 	time.Sleep(3 * time.Second)
@@ -388,6 +438,12 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("IST received the best portuguese freshmen", "IST T")
 	case "pub-5":
 		ps.MyPublish("Visit narlytrips.com for cheap and wonderfull surf trips!", "surf T/trip T")
+	case "pub-6":
+		ps.MyPublish("MIT start colaboration with IST!", "IST T/MIT T")
+	case "pub-7":
+		ps.MyPublish("Caltech shows the world the first quantic comuter!", "Caltech T")
+	case "pub-8":
+		ps.MyPublish("Benfica sells expendables for 250 M€!", "benfica T/soccer T")
 	}
 
 	time.Sleep(5 * time.Second)
