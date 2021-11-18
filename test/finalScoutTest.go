@@ -45,18 +45,11 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	recordedState := sync.State("recorded")
 
 	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
-
 	if err := stager.Begin(); err != nil {
 		return err
 	}
 
-	time.Sleep(5 * time.Second)
-	ri.Client.MustSignalEntry(ctx, readyState)
-	errStop := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
-
+	Sync(ctx, ri.RunInfo, readyState)
 	// Begining 1st-Sub
 
 	initMem, err := mem.VirtualMemory()
@@ -68,17 +61,13 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	config := pubsub.DefaultConfig("PT", 10)
-	config.ConcurrentProcessingFactor = 100
-	config.FaultToleranceFactor = replicationFactor
-	ps := pubsub.NewPubSub(ri.Node.dht, config)
+	cfg := pubsub.DefaultConfig("PT", 10)
+	cfg.TestgroundReady = true
+	cfg.FaultToleranceFactor = replicationFactor
+	ps := pubsub.NewPubSub(ri.Node.dht, cfg)
 	ps.SetHasOldPeer()
 
-	ri.Client.MustSignalEntry(ctx, createdState)
-	errStop = <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, createdState)
 
 	// Subscribing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -105,11 +94,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(2 * time.Second)
-	ri.Client.MustSignalEntry(ctx, subbedState)
-	errStop = <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -132,11 +117,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(3 * time.Second)
-	ri.Client.MustSignalEntry(ctx, finishedState)
-	errStop = <-ri.Client.MustBarrier(ctx, finishedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err := mem.VirtualMemory()
 	if err != nil {
@@ -148,6 +129,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	events := ps.ReturnEventStats()
+	ps.ReturnCorrectnessStats(nil)
 	subs := ps.ReturnSubStats()
 	runenv.R().RecordPoint("# Peers - ScoutSubs"+rFactor+"1st", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
@@ -161,11 +143,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs"+rFactor+"1st", float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, recordedState)
-	errStop = <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, recordedState)
 
 	// Begining 2nd-Sub
 	time.Sleep(time.Second)
@@ -179,11 +157,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ri.Client.MustSignalEntry(ctx, readyState)
-	errStop = <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	// Subscribing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -210,11 +184,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(3 * time.Second)
-	ri.Client.MustSignalEntry(ctx, subbedState)
-	errStop = <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -237,11 +207,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(5 * time.Second)
-	ri.Client.MustSignalEntry(ctx, finishedState)
-	errStop = <-ri.Client.MustBarrier(ctx, finishedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
 	if err != nil {
@@ -253,6 +219,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	events = ps.ReturnEventStats()
+	ps.ReturnCorrectnessStats(nil)
 	subs = ps.ReturnSubStats()
 	runenv.R().RecordPoint("# Peers - ScoutSubs"+rFactor+"2nd", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
@@ -266,11 +233,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs"+rFactor+"2nd", float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, recordedState)
-	errStop = <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, recordedState)
 
 	// Begining 3rd-Sub
 	time.Sleep(time.Second)
@@ -284,11 +247,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ri.Client.MustSignalEntry(ctx, readyState)
-	errStop = <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	// Subscribing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -315,11 +274,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(3 * time.Second)
-	ri.Client.MustSignalEntry(ctx, subbedState)
-	errStop = <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -342,11 +297,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(5 * time.Second)
-	ri.Client.MustSignalEntry(ctx, finishedState)
-	errStop = <-ri.Client.MustBarrier(ctx, finishedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
 	if err != nil {
@@ -358,6 +309,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	events = ps.ReturnEventStats()
+	ps.ReturnCorrectnessStats(nil)
 	subs = ps.ReturnSubStats()
 	runenv.R().RecordPoint("# Peers - ScoutSubs"+rFactor+"3rd", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
@@ -371,11 +323,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs"+rFactor+"3rd", float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, recordedState)
-	errStop = <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, recordedState)
 
 	// Begining Fault scenario
 	time.Sleep(time.Second)
@@ -389,11 +337,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ri.Client.MustSignalEntry(ctx, readyState)
-	errStop = <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	// Subscribe Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -420,11 +364,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(3 * time.Second)
-	ri.Client.MustSignalEntry(ctx, subbedState)
-	errStop = <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -447,11 +387,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(5 * time.Second)
-	ri.Client.MustSignalEntry(ctx, finishedState)
-	errStop = <-ri.Client.MustBarrier(ctx, finishedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
 	if err != nil {
@@ -463,6 +399,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	events = ps.ReturnEventStats()
+	ps.ReturnCorrectnessStats(nil)
 	subs = ps.ReturnSubStats()
 	runenv.R().RecordPoint("# Peers - ScoutSubs"+rFactor+"4th", float64(len(ri.Node.dht.RoutingTable().GetPeerInfos())))
 	runenv.RecordMessage("GroupID >> " + ri.RunInfo.RunEnv.RunParams.TestGroupID)
@@ -476,11 +413,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs"+rFactor+"4th", float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, recordedState)
-	errStop = <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
-	if errStop != nil {
-		return errStop
-	}
+	Sync(ctx, ri.RunInfo, recordedState)
 
 	if err := stager.End(); err != nil {
 		return err

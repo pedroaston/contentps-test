@@ -44,7 +44,6 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	recordedState := sync.State("recorded")
 
 	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
-
 	if err := stager.Begin(); err != nil {
 		return err
 	}
@@ -92,11 +91,7 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!")
 	}
 
-	ri.Client.MustSignalEntry(ctx, readyState)
-	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
-	if err != nil {
-		return err
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	initMem, err := mem.VirtualMemory()
 	if err != nil {
@@ -107,14 +102,12 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT", 10))
+	cfg := pubsub.DefaultConfig("PT", 10)
+	cfg.TestgroundReady = true
+	ps := pubsub.NewPubSub(ri.Node.dht, cfg)
 	ps.SetHasOldPeer()
 
-	ri.Client.MustSignalEntry(ctx, createdState)
-	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
-	if err1stStop != nil {
-		return err1stStop
-	}
+	Sync(ctx, ri.RunInfo, createdState)
 
 	// Subscribing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -137,11 +130,7 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(time.Second)
-	ri.Client.MustSignalEntry(ctx, subbedState)
-	err2ndStop := <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
-	if err2ndStop != nil {
-		return err2ndStop
-	}
+	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -168,11 +157,7 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(3 * time.Second)
-	ri.Client.MustSignalEntry(ctx, finishedState)
-	err3rdStop := <-ri.Client.MustBarrier(ctx, finishedState, runenv.TestInstanceCount).C
-	if err3rdStop != nil {
-		return err3rdStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err := mem.VirtualMemory()
 	if err != nil {
@@ -200,11 +185,7 @@ func TestEventBurstScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs eventBurst"+variant, float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, recordedState)
-	err4thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
-	if err4thStop != nil {
-		return err4thStop
-	}
+	Sync(ctx, ri.RunInfo, recordedState)
 
 	if err := stager.End(); err != nil {
 		return err

@@ -38,14 +38,14 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	variant := "BU"
 	runenv := ri.RunEnv
-	NreadyState := sync.State("ready")
-	NcreatedState := sync.State("created")
-	NsubbedState := sync.State("subbed")
-	NfinishedState := sync.State("finished")
-	NrecordedState := sync.State("recorded")
+	readyState := sync.State("ready")
+	createdState := sync.State("created")
+	subbedState := sync.State("subbed")
+	crashedState := sync.State("crashed")
+	finishedState := sync.State("finished")
+	recordedState := sync.State("recorded")
 
 	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
-
 	if err := stager.Begin(); err != nil {
 		return err
 	}
@@ -67,12 +67,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1050, just today!")
 	}
 
-	ri.Client.MustSignalEntry(ctx, NreadyState)
-	err := <-ri.Client.MustBarrier(ctx, NreadyState, runenv.TestInstanceCount).C
-	if err != nil {
-		return err
-	}
-
+	Sync(ctx, ri.RunInfo, readyState)
 	// Begining normal
 
 	initMem, err := mem.VirtualMemory()
@@ -84,16 +79,12 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	config := pubsub.DefaultConfig("PT", 10)
-	config.ConcurrentProcessingFactor = 250
-	ps := pubsub.NewPubSub(ri.Node.dht, config)
+	cfg := pubsub.DefaultConfig("PT", 10)
+	cfg.TestgroundReady = true
+	ps := pubsub.NewPubSub(ri.Node.dht, cfg)
 	ps.SetHasOldPeer()
 
-	ri.Client.MustSignalEntry(ctx, NcreatedState)
-	err1stStop := <-ri.Client.MustBarrier(ctx, NcreatedState, runenv.TestInstanceCount).C
-	if err1stStop != nil {
-		return err1stStop
-	}
+	Sync(ctx, ri.RunInfo, createdState)
 
 	// Subscribing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -118,11 +109,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(2 * time.Second)
-	ri.Client.MustSignalEntry(ctx, NsubbedState)
-	err2ndStop := <-ri.Client.MustBarrier(ctx, NsubbedState, runenv.TestInstanceCount).C
-	if err2ndStop != nil {
-		return err2ndStop
-	}
+	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -137,11 +124,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(2 * time.Second)
-	ri.Client.MustSignalEntry(ctx, NfinishedState)
-	err3rdStop := <-ri.Client.MustBarrier(ctx, NfinishedState, runenv.TestInstanceCount).C
-	if err3rdStop != nil {
-		return err3rdStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err := mem.VirtualMemory()
 	if err != nil {
@@ -169,18 +152,8 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs normal"+variant, float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, NrecordedState)
-	err4thStop := <-ri.Client.MustBarrier(ctx, NrecordedState, runenv.TestInstanceCount).C
-	if err4thStop != nil {
-		return err4thStop
-	}
-
+	Sync(ctx, ri.RunInfo, recordedState)
 	// Begining subburst
-	time.Sleep(time.Second)
-
-	SreadyState := sync.State("ready")
-	SfinishedState := sync.State("finished")
-	SrecordedState := sync.State("recorded")
 
 	initMem, err = mem.VirtualMemory()
 	if err != nil {
@@ -191,11 +164,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ri.Client.MustSignalEntry(ctx, SreadyState)
-	Serr1stStop := <-ri.Client.MustBarrier(ctx, SreadyState, runenv.TestInstanceCount).C
-	if Serr1stStop != nil {
-		return Serr1stStop
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	// Subscribing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -232,11 +201,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(3 * time.Second)
-	ri.Client.MustSignalEntry(ctx, SfinishedState)
-	Serr2ndStop := <-ri.Client.MustBarrier(ctx, SfinishedState, runenv.TestInstanceCount).C
-	if Serr2ndStop != nil {
-		return Serr2ndStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
 	if err != nil {
@@ -264,18 +229,8 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs subBurst"+variant, float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, SrecordedState)
-	Serr3rdStop := <-ri.Client.MustBarrier(ctx, SrecordedState, runenv.TestInstanceCount).C
-	if Serr3rdStop != nil {
-		return Serr3rdStop
-	}
-
+	Sync(ctx, ri.RunInfo, recordedState)
 	// Begining event burst
-	time.Sleep(time.Second)
-
-	EreadyState := sync.State("ready")
-	EfinishedState := sync.State("finished")
-	ErecordedState := sync.State("recorded")
 
 	expectedE = nil
 	// Expected events
@@ -346,11 +301,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ri.Client.MustSignalEntry(ctx, EreadyState)
-	Eerr1stStop := <-ri.Client.MustBarrier(ctx, EreadyState, runenv.TestInstanceCount).C
-	if Eerr1stStop != nil {
-		return err
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -377,11 +328,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(10 * time.Second)
-	ri.Client.MustSignalEntry(ctx, EfinishedState)
-	Eerr2ndStop := <-ri.Client.MustBarrier(ctx, EfinishedState, runenv.TestInstanceCount).C
-	if Eerr2ndStop != nil {
-		return Eerr2ndStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
 	if err != nil {
@@ -409,19 +356,8 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs eventBurst"+variant, float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, ErecordedState)
-	Eerr3rdStop := <-ri.Client.MustBarrier(ctx, ErecordedState, runenv.TestInstanceCount).C
-	if Eerr3rdStop != nil {
-		return err4thStop
-	}
-
+	Sync(ctx, ri.RunInfo, recordedState)
 	// Begining Fault scenario
-	time.Sleep(time.Second)
-
-	FreadyState := sync.State("ready")
-	FcrashedState := sync.State("crashed")
-	FfinishedState := sync.State("finished")
-	FrecordedState := sync.State("recorded")
 
 	expectedE = nil
 	// Expected events
@@ -449,11 +385,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ri.Client.MustSignalEntry(ctx, FreadyState)
-	Ferr1stStop := <-ri.Client.MustBarrier(ctx, FreadyState, runenv.TestInstanceCount).C
-	if Ferr1stStop != nil {
-		return Ferr1stStop
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	// Crash Routine
 	if ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-6" && (ri.Node.info.GroupSeq == 0 || ri.Node.info.GroupSeq == 1) {
@@ -461,11 +393,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(time.Second)
-	ri.Client.MustSignalEntry(ctx, FcrashedState)
-	Ferr2ndStop := <-ri.Client.MustBarrier(ctx, FcrashedState, runenv.TestInstanceCount).C
-	if Ferr2ndStop != nil {
-		return Ferr2ndStop
-	}
+	Sync(ctx, ri.RunInfo, crashedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -480,11 +408,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(3 * time.Second)
-	ri.Client.MustSignalEntry(ctx, FfinishedState)
-	Ferr3rdStop := <-ri.Client.MustBarrier(ctx, FfinishedState, runenv.TestInstanceCount).C
-	if Ferr3rdStop != nil {
-		return Ferr3rdStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
 	if err != nil {
@@ -515,11 +439,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		}
 	}
 
-	ri.Client.MustSignalEntry(ctx, FrecordedState)
-	Ferr4thStop := <-ri.Client.MustBarrier(ctx, FrecordedState, runenv.TestInstanceCount).C
-	if Ferr4thStop != nil {
-		return Ferr4thStop
-	}
+	Sync(ctx, ri.RunInfo, recordedState)
 
 	if err := stager.End(); err != nil {
 		return err

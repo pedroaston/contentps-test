@@ -45,7 +45,6 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 	recordedState := sync.State("recorded")
 
 	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
-
 	if err := stager.Begin(); err != nil {
 		return err
 	}
@@ -72,11 +71,7 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 			"Surf trip to bali for 2, only 1200, for the next week reserves!")
 	}
 
-	ri.Client.MustSignalEntry(ctx, readyState)
-	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
-	if err != nil {
-		return err
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	initMem, err := mem.VirtualMemory()
 	if err != nil {
@@ -90,14 +85,11 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 	// More frequent refresh cycles
 	cfg := pubsub.DefaultConfig("PT", 10)
 	cfg.SubRefreshRateMin = time.Duration(1)
+	cfg.TestgroundReady = true
 	ps := pubsub.NewPubSub(ri.Node.dht, cfg)
 	ps.SetHasOldPeer()
 
-	ri.Client.MustSignalEntry(ctx, createdState)
-	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
-	if err1stStop != nil {
-		return err1stStop
-	}
+	Sync(ctx, ri.RunInfo, createdState)
 
 	// Subscribing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -122,11 +114,7 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(time.Second)
-	ri.Client.MustSignalEntry(ctx, subbedState)
-	err2ndStop := <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
-	if err2ndStop != nil {
-		return err2ndStop
-	}
+	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -139,11 +127,7 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(time.Second)
-	ri.Client.MustSignalEntry(ctx, publishedState)
-	err3rdStop := <-ri.Client.MustBarrier(ctx, publishedState, runenv.TestInstanceCount).C
-	if err3rdStop != nil {
-		return err3rdStop
-	}
+	Sync(ctx, ri.RunInfo, publishedState)
 
 	if ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-1" {
 		ps.MyUnsubscribe("portugal T/surf T")
@@ -151,11 +135,7 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(2*time.Minute + 10*time.Second)
-	ri.Client.MustSignalEntry(ctx, refreshedState)
-	err4thStop := <-ri.Client.MustBarrier(ctx, refreshedState, runenv.TestInstanceCount).C
-	if err4thStop != nil {
-		return err4thStop
-	}
+	Sync(ctx, ri.RunInfo, refreshedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -168,11 +148,7 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(time.Second)
-	ri.Client.MustSignalEntry(ctx, finishedState)
-	err5thStop := <-ri.Client.MustBarrier(ctx, finishedState, runenv.TestInstanceCount).C
-	if err5thStop != nil {
-		return err5thStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err := mem.VirtualMemory()
 	if err != nil {
@@ -200,11 +176,7 @@ func TestLongRunScout(ctx context.Context, ri *DHTRunInfo) error {
 		runenv.R().RecordPoint("Sub Latency - ScoutSubs longrun"+variant, float64(sb))
 	}
 
-	ri.Client.MustSignalEntry(ctx, recordedState)
-	err6thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
-	if err6thStop != nil {
-		return err6thStop
-	}
+	Sync(ctx, ri.RunInfo, recordedState)
 
 	if err := stager.End(); err != nil {
 		return err

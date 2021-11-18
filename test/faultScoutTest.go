@@ -44,7 +44,6 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	recordedState := sync.State("recorded")
 
 	stager := utils.NewBatchStager(ctx, ri.Node.info.Seq, runenv.TestInstanceCount, "peer-records", ri.RunInfo)
-
 	if err := stager.Begin(); err != nil {
 		return err
 	}
@@ -67,11 +66,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		expectedE = append(expectedE, "Publishing via ipfs is lit!", "Surf trip to bali for 1050, just today!")
 	}
 
-	ri.Client.MustSignalEntry(ctx, readyState)
-	err := <-ri.Client.MustBarrier(ctx, readyState, runenv.TestInstanceCount).C
-	if err != nil {
-		return err
-	}
+	Sync(ctx, ri.RunInfo, readyState)
 
 	initMem, err := mem.VirtualMemory()
 	if err != nil {
@@ -82,14 +77,12 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		return err
 	}
 
-	ps := pubsub.NewPubSub(ri.Node.dht, pubsub.DefaultConfig("PT", 10))
+	cfg := pubsub.DefaultConfig("PT", 10)
+	cfg.TestgroundReady = true
+	ps := pubsub.NewPubSub(ri.Node.dht, cfg)
 	ps.SetHasOldPeer()
 
-	ri.Client.MustSignalEntry(ctx, createdState)
-	err1stStop := <-ri.Client.MustBarrier(ctx, createdState, runenv.TestInstanceCount).C
-	if err1stStop != nil {
-		return err1stStop
-	}
+	Sync(ctx, ri.RunInfo, createdState)
 
 	// Subscribing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -114,11 +107,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(time.Second)
-	ri.Client.MustSignalEntry(ctx, subbedState)
-	err2ndStop := <-ri.Client.MustBarrier(ctx, subbedState, runenv.TestInstanceCount).C
-	if err2ndStop != nil {
-		return err2ndStop
-	}
+	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Crash Routine
 	if ri.RunInfo.RunEnv.RunParams.TestGroupID == "sub-group-6" && (ri.Node.info.GroupSeq == 0 || ri.Node.info.GroupSeq == 1) {
@@ -126,11 +115,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(100 * time.Millisecond)
-	ri.Client.MustSignalEntry(ctx, crashedState)
-	err3rdStop := <-ri.Client.MustBarrier(ctx, crashedState, runenv.TestInstanceCount).C
-	if err3rdStop != nil {
-		return err3rdStop
-	}
+	Sync(ctx, ri.RunInfo, crashedState)
 
 	// Publishing Routine
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
@@ -145,11 +130,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 	}
 
 	time.Sleep(time.Second)
-	ri.Client.MustSignalEntry(ctx, finishedState)
-	err4thStop := <-ri.Client.MustBarrier(ctx, finishedState, runenv.TestInstanceCount).C
-	if err4thStop != nil {
-		return err4thStop
-	}
+	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err := mem.VirtualMemory()
 	if err != nil {
@@ -180,11 +161,7 @@ func TestFaultScout(ctx context.Context, ri *DHTRunInfo) error {
 		}
 	}
 
-	ri.Client.MustSignalEntry(ctx, recordedState)
-	err5thStop := <-ri.Client.MustBarrier(ctx, recordedState, runenv.TestInstanceCount).C
-	if err5thStop != nil {
-		return err5thStop
-	}
+	Sync(ctx, ri.RunInfo, recordedState)
 
 	if err := stager.End(); err != nil {
 		return err
