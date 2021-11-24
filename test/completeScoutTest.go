@@ -36,7 +36,7 @@ func CompleteScoutTest(runenv *runtime.RunEnv) error {
 
 func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 
-	variant := "BU"
+	variant := "RR"
 	runenv := ri.RunEnv
 	readyState := sync.State("ready")
 	createdState := sync.State("created")
@@ -81,6 +81,8 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	cfg := pubsub.DefaultConfig("PT", 10)
 	cfg.TestgroundReady = true
+	cfg.ConcurrentProcessingFactor = 1000
+	cfg.RPCTimeout = 20 * time.Second
 	ps := pubsub.NewPubSub(ri.Node.dht, cfg)
 	ps.SetHasOldPeer()
 
@@ -108,7 +110,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("surf T/trip T/price R 1000 1400")
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
 	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
@@ -123,7 +125,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Portugal won the world cup!", "portugal T/soccer T")
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err := mem.VirtualMemory()
@@ -154,6 +156,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	Sync(ctx, ri.RunInfo, recordedState)
 	// Begining subburst
+	time.Sleep(time.Second)
 
 	initMem, err = mem.VirtualMemory()
 	if err != nil {
@@ -200,7 +203,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Portugal won the world cup!", "portugal T/soccer T")
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(8 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
@@ -231,65 +234,40 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	Sync(ctx, ri.RunInfo, recordedState)
 	// Begining event burst
+	time.Sleep(time.Second)
 
-	expectedE = nil
 	// Expected events
 	switch ri.RunInfo.RunEnv.RunParams.TestGroupID {
 	case "sub-group-1":
-		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
-			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
-			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 15 times cooler than flip-flops!",
-			"Using IPFS, is 16 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
-			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
-			"Using IPFS, is 13 times cooler than flying-cars!", "Using IPFS, is 14 times cooler than flying-cars!",
-			"Using IPFS, is 15 times cooler than flying-cars!", "Using IPFS, is 16 times cooler than flying-cars!",
-			"I already surfed 10 portuguese beaches!", "I already surfed 11 portuguese beaches!",
-			"I already surfed 12 portuguese beaches!", "I already surfed 13 portuguese beaches!",
-			"I already surfed 14 portuguese beaches!", "I already surfed 15 portuguese beaches!")
+		prefixes := []string{"Using IPFS, is 1", "Using IPFS, is 1", "I already surfed 1"}
+		sufixes := []string{" times cooler than flip-flops!", " times cooler than flying-cars!", " portuguese beaches!"}
+		groupSizes := []int{16, 16, 16}
+		expectedE = ExpectedEvents(prefixes, sufixes, groupSizes)
 	case "sub-group-2":
-		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
-			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
-			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 15 times cooler than flip-flops!",
-			"Using IPFS, is 16 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
-			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
-			"Using IPFS, is 13 times cooler than flying-cars!", "Using IPFS, is 14 times cooler than flying-cars!",
-			"Using IPFS, is 15 times cooler than flying-cars!", "Using IPFS, is 16 times cooler than flying-cars!",
-			"Portugal will score 10 goals at the world cup!",
-			"Portugal will score 11 goals at the world cup!", "Portugal will score 12 goals at the world cup!",
-			"Portugal will score 13 goals at the world cup!", "Portugal will score 14 goals at the world cup!",
-			"Portugal will score 15 goals at the world cup!", "Portugal will score 16 goals at the world cup!")
+		prefixes := []string{"Using IPFS, is 1", "Using IPFS, is 1", "Portugal will score 1"}
+		sufixes := []string{" times cooler than flip-flops!", " times cooler than flying-cars!", " goals at the world cup!"}
+		groupSizes := []int{16, 16, 16}
+		expectedE = ExpectedEvents(prefixes, sufixes, groupSizes)
 	case "sub-group-3":
-		expectedE = append(expectedE, "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!",
-			"Surf trip to bali for 1105, just today!", "Surf trip to bali for 1106, just today!")
+		prefixes := []string{"Surf trip to bali for 11"}
+		sufixes := []string{", just today!"}
+		groupSizes := []int{16}
+		expectedE = ExpectedEvents(prefixes, sufixes, groupSizes)
 	case "sub-group-4":
-		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
-			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
-			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 15 times cooler than flip-flops!",
-			"Using IPFS, is 16 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
-			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
-			"Using IPFS, is 13 times cooler than flying-cars!", "Using IPFS, is 14 times cooler than flying-cars!",
-			"Using IPFS, is 15 times cooler than flying-cars!", "Using IPFS, is 16 times cooler than flying-cars!",
-			"Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!")
+		prefixes := []string{"Using IPFS, is 1", "Using IPFS, is 1", "Surf trip to bali for 11"}
+		sufixes := []string{" times cooler than flip-flops!", " times cooler than flying-cars!", ", just today!"}
+		groupSizes := []int{16, 16, 16}
+		expectedE = ExpectedEvents(prefixes, sufixes, groupSizes)
 	case "sub-group-5":
-		expectedE = append(expectedE, "Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!",
-			"Surf trip to bali for 1105, just today!", "Surf trip to bali for 1106, just today!",
-			"Surf trip to hawai for 1600, just today!", "Surf trip to hawai for 1601, just today!", "Surf trip to hawai for 1602, just today!",
-			"Surf trip to hawai for 1603, just today!", "Surf trip to hawai for 1604, just today!", "Surf trip to hawai for 1605, just today!",
-			"Surf trip to hawai for 1606, just today!")
+		prefixes := []string{"Surf trip to bali for 11", "Surf trip to hawai for 16"}
+		sufixes := []string{", just today!", ", just today!"}
+		groupSizes := []int{16, 16}
+		expectedE = ExpectedEvents(prefixes, sufixes, groupSizes)
 	case "sub-group-6":
-		expectedE = append(expectedE, "Using IPFS, is 10 times cooler than flip-flops!", "Using IPFS, is 11 times cooler than flip-flops!",
-			"Using IPFS, is 12 times cooler than flip-flops!", "Using IPFS, is 13 times cooler than flip-flops!",
-			"Using IPFS, is 14 times cooler than flip-flops!", "Using IPFS, is 15 times cooler than flip-flops!",
-			"Using IPFS, is 16 times cooler than flip-flops!", "Using IPFS, is 10 times cooler than flying-cars!",
-			"Using IPFS, is 11 times cooler than flying-cars!", "Using IPFS, is 12 times cooler than flying-cars!",
-			"Using IPFS, is 13 times cooler than flying-cars!", "Using IPFS, is 14 times cooler than flying-cars!",
-			"Using IPFS, is 15 times cooler than flying-cars!", "Using IPFS, is 16 times cooler than flying-cars!",
-			"Surf trip to bali for 1100, just today!", "Surf trip to bali for 1101, just today!",
-			"Surf trip to bali for 1102, just today!", "Surf trip to bali for 1103, just today!", "Surf trip to bali for 1104, just today!",
-			"Surf trip to bali for 1105, just today!", "Surf trip to bali for 1106, just today!")
+		prefixes := []string{"Using IPFS, is 1", "Using IPFS, is 1", "Surf trip to bali for 11"}
+		sufixes := []string{" times cooler than flip-flops!", " times cooler than flying-cars!", ", just today!"}
+		groupSizes := []int{16, 16, 16}
+		expectedE = ExpectedEvents(prefixes, sufixes, groupSizes)
 	}
 
 	initMem, err = mem.VirtualMemory()
@@ -327,7 +305,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish(event1, "portugal T/surf T")
 	}
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(30 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
@@ -358,6 +336,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	Sync(ctx, ri.RunInfo, recordedState)
 	// Begining Fault scenario
+	time.Sleep(time.Second)
 
 	expectedE = nil
 	// Expected events
@@ -407,7 +386,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Portugal won the world cup!", "portugal T/soccer T")
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(5 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()

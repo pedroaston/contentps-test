@@ -35,8 +35,8 @@ func FinalScoutTest(runenv *runtime.RunEnv) error {
 
 func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 
-	replicationFactor := 0
-	rFactor := "0"
+	replicationFactor := 1
+	rFactor := "1"
 	runenv := ri.RunEnv
 	readyState := sync.State("ready")
 	createdState := sync.State("created")
@@ -64,6 +64,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 	cfg := pubsub.DefaultConfig("PT", 10)
 	cfg.TestgroundReady = true
 	cfg.FaultToleranceFactor = replicationFactor
+	cfg.ConcurrentProcessingFactor = 500
 	ps := pubsub.NewPubSub(ri.Node.dht, cfg)
 	ps.SetHasOldPeer()
 
@@ -93,7 +94,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("portugal T/museum T/art T")
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(6 * time.Second)
 	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
@@ -116,7 +117,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Expo of impessionist art in CCB, next week ", "portugal T/museum T/art T")
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(4 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err := mem.VirtualMemory()
@@ -183,7 +184,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("ronaldo T/sporting T")
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(6 * time.Second)
 	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
@@ -206,7 +207,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Ronaldo refuses sporting, for benfica is the best portuguese club", "ronaldo T/sporting T")
 	}
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(4 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
@@ -273,7 +274,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("ipfs T")
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(6 * time.Second)
 	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
@@ -296,7 +297,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Visit narlytrips.com for cheap and wonderfull surf trips!", "surf T/trip T")
 	}
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(4 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
@@ -325,7 +326,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 
 	Sync(ctx, ri.RunInfo, recordedState)
 
-	// Begining Fault scenario
+	// Begining 4th-Sub
 	time.Sleep(time.Second)
 
 	initMem, err = mem.VirtualMemory()
@@ -363,7 +364,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MySubscribe("Caltech T")
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(6 * time.Second)
 	Sync(ctx, ri.RunInfo, subbedState)
 
 	// Publishing Routine
@@ -386,7 +387,7 @@ func TestFinalScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("Benfica sells expendables for 250 M€!", "benfica T/soccer T")
 	}
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(4 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
