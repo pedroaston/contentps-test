@@ -16,7 +16,7 @@ require (
 	github.com/libp2p/go-libp2p-xor v0.0.0-20210714161855-5c005aca55db
 	github.com/libp2p/go-tcp-transport v0.2.8
 	github.com/multiformats/go-multiaddr v0.4.0
-	github.com/pedroaston/contentpubsub v0.13.79
+	github.com/pedroaston/contentpubsub v0.13.81
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil/v3 v3.21.10
 	github.com/testground/sdk-go v0.2.7
