@@ -147,7 +147,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("ipfs has just hit 100 millions of unique user!", "ipfs T")
 	}
 
-	time.Sleep(4 * time.Second)
+	time.Sleep(30 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err := mem.VirtualMemory()
@@ -239,7 +239,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish("ipfs has just hit 100 millions of unique user!", "ipfs T")
 	}
 
-	time.Sleep(8 * time.Second)
+	time.Sleep(30 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()
@@ -375,7 +375,7 @@ func TestCompleteScout(ctx context.Context, ri *DHTRunInfo) error {
 		ps.MyPublish(event1, "bruno mars T")
 	}
 
-	time.Sleep(30 * time.Second)
+	time.Sleep(40 * time.Second)
 	Sync(ctx, ri.RunInfo, finishedState)
 
 	finalMem, err = mem.VirtualMemory()

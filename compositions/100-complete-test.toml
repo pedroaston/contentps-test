@@ -19,10 +19,7 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "1"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-2"
@@ -34,11 +31,8 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "4"
       record_count = "1"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-3"
@@ -50,11 +44,8 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "3"
       record_count = "1"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-4"
@@ -66,11 +57,8 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "2"
       record_count = "1"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-5"
@@ -82,11 +70,8 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "5"
       search_records = "true"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-6"
@@ -99,10 +84,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "0"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-7"
@@ -114,11 +96,8 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "7"
       record_count = "1"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-8"
@@ -130,11 +109,8 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "8"
       record_count = "1"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-9"
@@ -146,11 +122,8 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "9"
       record_count = "1"
-      timeout_secs = "600"
 
 [[groups]]
   id = "sub-group-10"
@@ -162,11 +135,8 @@
     [groups.run.test_params]
       alpha = "6"
       beta = "3"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "10"
       record_count = "1"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-1"
@@ -179,10 +149,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "11"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-2"
@@ -195,10 +162,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "12"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-3"
@@ -211,10 +175,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "13"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-4"
@@ -227,10 +188,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "14"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-5"
@@ -243,10 +201,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "15"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-6"
@@ -259,10 +214,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "16"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-7"
@@ -275,10 +227,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "17"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-8"
@@ -291,10 +240,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "18"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-9"
@@ -307,10 +253,7 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "19"
-      timeout_secs = "600"
 
 [[groups]]
   id = "pub-10"
@@ -323,7 +266,4 @@
       alpha = "6"
       beta = "3"
       bootstrapper = "true"
-      bs_strategy = "6"
-      bucket_size = "10"
       group_order = "20"
-      timeout_secs = "600"
